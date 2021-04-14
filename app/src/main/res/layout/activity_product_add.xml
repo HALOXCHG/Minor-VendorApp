@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityProductAdd">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Product"
+        android:textAlignment="center"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.022" />
+
+    <ImageView
+        android:id="@+id/productImage"
+        android:layout_width="97dp"
+        android:layout_height="84dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <EditText
+        android:id="@+id/productName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="Product Name"
+        android:inputType="textPersonName"
+        android:backgroundTint="@color/textfield_tint"
+        app:layout_constraintBottom_toTopOf="@+id/productType"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/productImage"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/productType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="Product Type"
+        android:inputType="textPersonName"
+        android:backgroundTint="@color/textfield_tint"
+        app:layout_constraintBottom_toBottomOf="@+id/productImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/productImage" />
+
+    <EditText
+        android:id="@+id/mrp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="MRP (Maximum Retail Price)"
+        android:inputType="numberDecimal"
+        android:backgroundTint="@color/textfield_tint"
+        app:layout_constraintEnd_toEndOf="@+id/productName"
+        app:layout_constraintStart_toStartOf="@+id/productImage"
+        app:layout_constraintTop_toBottomOf="@+id/productImage" />
+
+    <EditText
+        android:id="@+id/sellingPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="Selling Price"
+        android:inputType="numberDecimal"
+        android:backgroundTint="@color/textfield_tint"
+        app:layout_constraintEnd_toEndOf="@+id/productName"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/productImage"
+        app:layout_constraintTop_toBottomOf="@+id/mrp" />
+
+    <EditText
+        android:id="@+id/quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/transparent"
+        android:drawableEnd="@drawable/ic_baseline_my_location_24"
+        android:ems="10"
+        android:hint="Quantity"
+        android:inputType="text"
+        android:backgroundTint="@color/textfield_tint"
+        app:layout_constraintEnd_toEndOf="@+id/productName"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/productImage"
+        app:layout_constraintTop_toBottomOf="@+id/sellingPrice" />
+
+    <EditText
+        android:id="@+id/units"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="Units (Ex. pcs., kg, ml)"
+        android:inputType="text"
+        android:backgroundTint="@color/textfield_tint"
+        app:layout_constraintEnd_toEndOf="@+id/productName"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/productImage"
+        app:layout_constraintTop_toBottomOf="@+id/quantity" />
+
+    <EditText
+        android:id="@+id/availableStock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="Total Stock (Ex. 20kgs, 10 pcs.)"
+        android:inputType="numberDecimal"
+        android:backgroundTint="@color/textfield_tint"
+        app:layout_constraintEnd_toEndOf="@+id/productName"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/productImage"
+        app:layout_constraintTop_toBottomOf="@+id/units" />
+
+    <EditText
+        android:id="@+id/productDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="25dp"
+        android:background="@android:color/transparent"
+        android:backgroundTint="@color/textfield_tint"
+        android:ems="10"
+        android:hint="Product Description"
+        android:inputType="textMultiLine"
+        app:layout_constraintEnd_toEndOf="@+id/productName"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/productImage"
+        app:layout_constraintTop_toBottomOf="@+id/availableStock" />
+
+    <Button
+        android:id="@+id/addProduct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="25dp"
+        android:layout_marginTop="25dp"
+        android:paddingVertical="10dp"
+        android:text="Add"
+        app:layout_constraintEnd_toEndOf="@+id/productType"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/productImage"
+        app:layout_constraintTop_toBottomOf="@+id/productDescription" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
