@@ -98,7 +98,6 @@
         android:layout_marginHorizontal="30dp"
         android:layout_marginTop="25dp"
         android:background="@android:color/transparent"
-        android:drawableEnd="@drawable/ic_baseline_my_location_24"
         android:ems="10"
         android:hint="Quantity"
         android:inputType="text"
