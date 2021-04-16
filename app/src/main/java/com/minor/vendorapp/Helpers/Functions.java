@@ -1,9 +1,12 @@
 package com.minor.vendorapp.Helpers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,11 +23,13 @@ import com.karumi.dexter.listener.DexterError;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.minor.vendorapp.ObjectLocationDetails;
 import com.minor.vendorapp.PermissionCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public class Functions {
@@ -58,11 +63,24 @@ public class Functions {
                 .check();
     }
 
-    public static JSONObject signupJsonObject(final String a, final String b) {
+    public static JSONObject signupJsonObject(final String shopName, final String ownerName, final String contactNumber, final String emailAddress, final String shopType, final JSONObject shopTimings, final String image, final ObjectLocationDetails objectLocationDetails) {
         JSONObject object = new JSONObject();
         try {
-            object.put("test", a);
-            object.put("test2", b);
+            object.put("contact_no", contactNumber);
+            object.put("owner_name", ownerName);
+            object.put("email", emailAddress);
+            object.put("shop_name", shopName);
+            object.put("shop_type", shopType);
+            object.put("shop_type", shopTimings);
+            object.put("latitude", objectLocationDetails.latitude);
+            object.put("longitude", objectLocationDetails.longitude);
+            object.put("locality", objectLocationDetails.locality);
+            object.put("country", objectLocationDetails.country);
+            object.put("state", objectLocationDetails.state);
+            object.put("pincode", objectLocationDetails.pincode);
+            object.put("address_line", objectLocationDetails.address_line);
+            object.put("user_given_address", objectLocationDetails.user_given_address);
+            object.put("image", image);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -75,6 +93,12 @@ public class Functions {
         editor.putString("avc", jsonObject.optString("avc"));
 
         editor.apply();
+    }
+
+    public static String bitmap_to_base64(Activity activity, Bitmap imagebitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imagebitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+        return Base64.encodeToString(baos.toByteArray(), 0);
     }
 
     public static void logout() {

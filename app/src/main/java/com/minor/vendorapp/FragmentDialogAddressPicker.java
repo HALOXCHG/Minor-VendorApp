@@ -51,6 +51,29 @@ import java.util.Objects;
 
 public class FragmentDialogAddressPicker extends DialogFragment implements OnMapReadyCallback {
 
+    CustomLocationListener customLocationListener;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        generatedAddress = (TextView) view.findViewById(R.id.generatedAddress);
+        landmark = (EditText) view.findViewById(R.id.landmark);
+        saveAddress = (Button) view.findViewById(R.id.saveAddress);
+        marker = (ImageView) view.findViewById(R.id.markerImage);
+
+        saveAddress.setOnClickListener(view1 -> {
+            if (!landmark.getText().toString().trim().equalsIgnoreCase("") || !landmark.getText().toString().trim().isEmpty()) {
+                customLocationListener.setAddress(landmark.getText().toString().trim(), new ObjectLocationDetails(1.343d, 1.333d, "locality", "country", "state", "pincode", "address_line", "user_given_address"));
+                dialog.dismiss();
+            } else {
+                landmark.setError("Add Landmark");
+            }
+        });
+
+        initializeMap();
+    }
+
     private static View view;
     Dialog dialog;
 
@@ -86,7 +109,6 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
         if (view != null) {
             ViewGroup parent = (ViewGroup) view.getParent();
             if (parent != null)
@@ -101,15 +123,15 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
 
-        generatedAddress = (TextView) view.findViewById(R.id.generatedAddress);
-        landmark = (EditText) view.findViewById(R.id.landmark);
-        saveAddress = (Button) view.findViewById(R.id.saveAddress);
-        marker = (ImageView) view.findViewById(R.id.markerImage);
-
-        initializeMap();
+        //Passing User Location Data back to Signup Activity via Interface
+        try {
+            customLocationListener = (CustomLocationListener) getActivity();
+        } catch (ClassCastException e) {
+            Log.i("TAG", "onAttach: ClassCastException " + e.toString());
+        }
     }
 
     private void initializeMap() {
@@ -345,5 +367,9 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
         ViewGroup parent = (ViewGroup) view.getParent();
         if (parent != null)
             parent.removeView(view);
+    }
+
+    public interface CustomLocationListener {
+        void setAddress(String userAddress, ObjectLocationDetails objectLocationDetails);
     }
 }
