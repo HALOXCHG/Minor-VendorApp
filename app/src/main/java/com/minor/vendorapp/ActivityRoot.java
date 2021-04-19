@@ -1,9 +1,11 @@
 package com.minor.vendorapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.minor.vendorapp.Signup.ActivitySignup;
 
 public class ActivityRoot extends AppCompatActivity {
 

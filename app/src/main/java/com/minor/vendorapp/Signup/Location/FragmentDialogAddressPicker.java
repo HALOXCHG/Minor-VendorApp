@@ -1,4 +1,4 @@
-package com.minor.vendorapp;
+package com.minor.vendorapp.Signup.Location;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -44,6 +44,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.listener.DexterError;
 import com.minor.vendorapp.Helpers.Functions;
+import com.minor.vendorapp.Helpers.PermissionCallback;
+import com.minor.vendorapp.R;
 
 import java.util.List;
 import java.util.Locale;
@@ -52,27 +54,6 @@ import java.util.Objects;
 public class FragmentDialogAddressPicker extends DialogFragment implements OnMapReadyCallback {
 
     CustomLocationListener customLocationListener;
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        generatedAddress = (TextView) view.findViewById(R.id.generatedAddress);
-        landmark = (EditText) view.findViewById(R.id.landmark);
-        saveAddress = (Button) view.findViewById(R.id.saveAddress);
-        marker = (ImageView) view.findViewById(R.id.markerImage);
-
-        saveAddress.setOnClickListener(view1 -> {
-            if (!landmark.getText().toString().trim().equalsIgnoreCase("") || !landmark.getText().toString().trim().isEmpty()) {
-                customLocationListener.setAddress(landmark.getText().toString().trim(), new ObjectLocationDetails(1.343d, 1.333d, "locality", "country", "state", "pincode", "address_line", "user_given_address"));
-                dialog.dismiss();
-            } else {
-                landmark.setError("Add Landmark");
-            }
-        });
-
-        initializeMap();
-    }
 
     private static View view;
     Dialog dialog;
@@ -120,6 +101,27 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
             /* map is already there, just return view as it is */
         }
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        generatedAddress = view.findViewById(R.id.generatedAddress);
+        landmark = view.findViewById(R.id.landmark);
+        saveAddress = view.findViewById(R.id.saveAddress);
+        marker = view.findViewById(R.id.markerImage);
+
+        saveAddress.setOnClickListener(view1 -> {
+            if (!landmark.getText().toString().trim().equalsIgnoreCase("") || !landmark.getText().toString().trim().isEmpty()) {
+                customLocationListener.setAddress(landmark.getText().toString().trim(), new ObjectLocationDetails(1.343d, 1.333d, "locality", "country", "state", "pincode", "address_line", "user_given_address"));
+                dialog.dismiss();
+            } else {
+                landmark.setError("Add Landmark");
+            }
+        });
+
+        initializeMap();
     }
 
     @Override
@@ -306,49 +308,46 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(userLocation));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 20f));
 
-                mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-                    @Override
-                    public void onCameraIdle() {
-                        Log.i("run", "on camera idle");
+                mMap.setOnCameraIdleListener(() -> {
+                    Log.i("run", "on camera idle");
 
-                        LatLng userLocation;
-                        mMap.clear();
-                        LatLng mapCenter = mMap.getCameraPosition().target;
-                        marker_google.setPosition(mapCenter);
-                        if (marker_google != null) {
-                            Log.i("run", "marker google not null");
+                    LatLng userLocation1;
+                    mMap.clear();
+                    LatLng mapCenter = mMap.getCameraPosition().target;
+                    marker_google.setPosition(mapCenter);
+                    if (marker_google != null) {
+                        Log.i("run", "marker google not null");
 
 
-                            marker_google.remove();
-                            userLocation = marker_google.getPosition();
-                            if (getContext() != null) {
-                                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-                                try {
-                                    List<Address> myaddresses = geocoder.getFromLocation(userLocation.latitude, userLocation.longitude, 1);
-                                    if (myaddresses != null && myaddresses.size() > 0) {
-                                        String address = "";
-                                        Log.i("address", "" + myaddresses.get(0));
-                                        if (myaddresses.get(0).getAddressLine(0) != null) {
-                                            address += myaddresses.get(0).getAddressLine(0) + " ";
-                                        }
-                                        generatedAddress.setText(address);
-                                        MarkerOptions markerOptions = new MarkerOptions();
-                                        markerOptions.position(userLocation);
-                                        markerOptions.title("user");
-
-                                        marker_google = mMap.addMarker(markerOptions);
-                                        marker_google.setDraggable(true);
-                                        marker_google.remove();
-
-                                        mMap.setMaxZoomPreference(18f);
-                                        mMap.animateCamera(CameraUpdateFactory.newLatLng(userLocation));
-
-                                        Log.i("userLocation", "" + userLocation.latitude);
+                        marker_google.remove();
+                        userLocation1 = marker_google.getPosition();
+                        if (getContext() != null) {
+                            Geocoder geocoder1 = new Geocoder(getContext(), Locale.getDefault());
+                            try {
+                                List<Address> myaddresses1 = geocoder1.getFromLocation(userLocation1.latitude, userLocation1.longitude, 1);
+                                if (myaddresses1 != null && myaddresses1.size() > 0) {
+                                    String address1 = "";
+                                    Log.i("address", "" + myaddresses1.get(0));
+                                    if (myaddresses1.get(0).getAddressLine(0) != null) {
+                                        address1 += myaddresses1.get(0).getAddressLine(0) + " ";
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    Log.i("run", "catch");
+                                    generatedAddress.setText(address1);
+                                    MarkerOptions markerOptions1 = new MarkerOptions();
+                                    markerOptions1.position(userLocation1);
+                                    markerOptions1.title("user");
+
+                                    marker_google = mMap.addMarker(markerOptions1);
+                                    marker_google.setDraggable(true);
+                                    marker_google.remove();
+
+                                    mMap.setMaxZoomPreference(18f);
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLng(userLocation1));
+
+                                    Log.i("userLocation", "" + userLocation1.latitude);
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.i("run", "catch");
                             }
                         }
                     }

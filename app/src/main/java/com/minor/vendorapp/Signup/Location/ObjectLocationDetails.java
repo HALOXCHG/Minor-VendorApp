@@ -1,4 +1,4 @@
-package com.minor.vendorapp;
+package com.minor.vendorapp.Signup.Location;
 
 public class ObjectLocationDetails {
 

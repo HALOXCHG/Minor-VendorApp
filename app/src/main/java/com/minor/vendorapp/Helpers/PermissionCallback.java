@@ -1,4 +1,4 @@
-package com.minor.vendorapp;
+package com.minor.vendorapp.Helpers;
 
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.listener.DexterError;

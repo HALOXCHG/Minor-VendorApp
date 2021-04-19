@@ -23,10 +23,7 @@ import com.karumi.dexter.listener.DexterError;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.minor.vendorapp.ObjectLocationDetails;
-import com.minor.vendorapp.PermissionCallback;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -61,30 +58,6 @@ public class Functions {
                 })
                 .onSameThread()
                 .check();
-    }
-
-    public static JSONObject signupJsonObject(final String shopName, final String ownerName, final String contactNumber, final String emailAddress, final String shopType, final JSONObject shopTimings, final String image, final ObjectLocationDetails objectLocationDetails) {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("contact_no", contactNumber);
-            object.put("owner_name", ownerName);
-            object.put("email", emailAddress);
-            object.put("shop_name", shopName);
-            object.put("shop_type", shopType);
-            object.put("shop_type", shopTimings);
-            object.put("latitude", objectLocationDetails.latitude);
-            object.put("longitude", objectLocationDetails.longitude);
-            object.put("locality", objectLocationDetails.locality);
-            object.put("country", objectLocationDetails.country);
-            object.put("state", objectLocationDetails.state);
-            object.put("pincode", objectLocationDetails.pincode);
-            object.put("address_line", objectLocationDetails.address_line);
-            object.put("user_given_address", objectLocationDetails.user_given_address);
-            object.put("image", image);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return object;
     }
 
     public static void storeSignupData(JSONObject jsonObject) {

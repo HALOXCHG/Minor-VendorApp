@@ -8,4 +8,17 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="textfield_tint">#222222</color>
+
+    <color name="circle_toggle_button_text_color">@color/teal_200</color>
+    <color name="dayPressed">@color/teal_700</color>
+    <color name="daySelected">@color/teal_200</color>
+    <color name="daySelectedTextColor">@android:color/white</color>
+    <color name="dayDeselected">#f2f2f2</color>
+    <color name="dayDeselectedTextColor">@color/teal_200</color>
+
+    <!-- Customizing colors for disabled days-->
+    <color name="daySelectedAndDisabled">#43444F</color>
+    <color name="daySelectedAndDisabledTextColor">@color/daySelectedTextColor</color>
+    <color name="dayDeselectedAndDisabled">@color/dayDeselected</color>
+    <color name="dayDeselectedAndDisabledTextColor">@android:color/darker_gray</color>
 </resources>
