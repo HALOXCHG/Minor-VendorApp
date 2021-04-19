@@ -9,7 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="textfield_tint">#222222</color>
 
-    <color name="circle_toggle_button_text_color">@color/teal_200</color>
+<!--    <color name="circle_toggle_button_text_color">@color/teal_200</color>-->
     <color name="dayPressed">@color/teal_700</color>
     <color name="daySelected">@color/teal_200</color>
     <color name="daySelectedTextColor">@android:color/white</color>

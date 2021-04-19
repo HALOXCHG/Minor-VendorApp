@@ -177,7 +177,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
         inputOwnerName = getInputText(ownerName); //ownerName : String format
         inputContactNumber = getInputText(contactNumber); //contactNumber : String format
         inputEmailAddress = getInputText(emailAddress); //emailAddress : String format
-        inputShopType = getInputText(shopType); //shopName : String format
+        inputShopType = getInputText(shopType); //shopType : String format
 
         JSONObject inputShopTimingsObject = getShopTimingsJsonObject(); //shopTimings : JSON Object
         inputShopImage = Functions.bitmap_to_base64(ActivitySignup.this, ((BitmapDrawable) shopImage.getDrawable()).getBitmap()); //shopImage : String format
