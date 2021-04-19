@@ -2,6 +2,7 @@ package com.minor.vendorapp.Signup.Location;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -49,15 +50,13 @@ import com.minor.vendorapp.R;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class FragmentDialogAddressPicker extends DialogFragment implements OnMapReadyCallback {
 
     CustomLocationListener customLocationListener;
-
-    private static View view;
     Dialog dialog;
-
+    Context context; //Gets context
+    Activity activity; //Gets Parent Activity
     EditText landmark;
     TextView generatedAddress;
     Button saveAddress;
@@ -66,12 +65,12 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
     FusedLocationProviderClient fusedLocationProviderClient;
     ImageView marker;
     Marker marker_google;
+    private View view;
     private GoogleMap mMap;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-
         // the content
         final RelativeLayout root = new RelativeLayout(getActivity());
         root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -106,6 +105,10 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (isAdded()) {
+            activity = getActivity();
+            context = getContext();
+        }
 
         generatedAddress = view.findViewById(R.id.generatedAddress);
         landmark = view.findViewById(R.id.landmark);
@@ -127,28 +130,27 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
+        this.context = context;
         //Passing User Location Data back to Signup Activity via Interface
         try {
-            customLocationListener = (CustomLocationListener) getActivity();
+            customLocationListener = (FragmentDialogAddressPicker.CustomLocationListener) getActivity();
         } catch (ClassCastException e) {
-            Log.i("TAG", "onAttach: ClassCastException " + e.toString());
+            Log.i("Test", "onAttach: ClassCastException " + e.toString());
         }
     }
 
     private void initializeMap() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getActivity()));
-        SupportMapFragment mapFragment = (SupportMapFragment) Objects.requireNonNull(getActivity()).getSupportFragmentManager()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
-        Objects.requireNonNull(mapFragment).getMapAsync(this);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(FragmentDialogAddressPicker.this);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(getContext(), "OnMapReady", Toast.LENGTH_SHORT).show();
-
         mMap = googleMap;
-        locationManager = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
         //Triggers whenever user location co-ordinates change
         locationListener = new LocationListener() {
@@ -184,43 +186,34 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
             }
         };
 
-//        if (Build.VERSION.SDK_INT < 23) {
-//            Log.i("run", "int <23");
-//
-//            if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
-//                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-//                    && ActivityCompat.checkSelfPermission(getContext(),
-//                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-//            mMap.setMyLocationEnabled(true);
-//
-//        }
-//        else {
-//            Log.i("run", "else of 23");
-//            if (Objects.requireNonNull(getContext()).checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-//            }
-//            else {
-//
-//                Log.i("run", "else else else ");
-//                mMap.setMyLocationEnabled(true);
-//                mMap.setMaxZoomPreference(18f);
-//
-//                fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
-//                    Location location = task.getResult();
-//                    if (location != null) {
-//                        getUserLocation(location);
-//                        Log.i("run", "on complete");
-//
-//                    }
-//                });
-//                mMap.clear();
-//            }
-//        }
+        if (Build.VERSION.SDK_INT < 23) {
+            if (ActivityCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            mMap.setMyLocationEnabled(true);
 
-        if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getActivity()), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        } else {
+            if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            } else {
+                mMap.setMyLocationEnabled(true);
+                mMap.setMaxZoomPreference(18f);
+
+                fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+                    Location location = task.getResult();
+                    if (location != null) {
+                        getUserLocation(location);
+                    }
+                });
+                mMap.clear();
+            }
+        }
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Functions.requestPermissions(getContext(), new PermissionCallback() {
                 @SuppressLint("MissingPermission")
                 @Override
@@ -276,20 +269,15 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
     }
 
     public void getUserLocation(Location location) {
-
-        Log.i("run", "getuserLocation");
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
-
             List<Address> myaddresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-
             if (myaddresses != null && myaddresses.size() > 0) {
                 String address = "";
                 Log.i("address", "" + myaddresses.get(0));
                 if (myaddresses.get(0).getAddressLine(0) != null) {
                     address += myaddresses.get(0).getAddressLine(0) + " ";
                 }
-
 
                 generatedAddress.setText(address);
                 Log.i("Address", "" + address);
@@ -355,7 +343,6 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.i("run", "catch last");
         }
 
     }
