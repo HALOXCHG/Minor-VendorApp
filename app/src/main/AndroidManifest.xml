@@ -16,7 +16,7 @@
         android:theme="@style/Theme.MinorVendorApp">
         <activity
             android:name=".ActivityHomeScreen"
-            android:label="@string/title_activity_home_screen"></activity>
+            android:label="@string/title_activity_home_screen" />
         <activity android:name=".ActivityProductAdd" />
         <activity android:name=".Signup.ActivitySignup" />
         <activity android:name=".ActivityRoot">

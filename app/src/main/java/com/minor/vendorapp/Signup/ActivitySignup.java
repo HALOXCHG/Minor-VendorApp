@@ -28,6 +28,7 @@ import androidx.core.app.ActivityCompat;
 import com.android.volley.VolleyError;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.listener.DexterError;
+import com.minor.vendorapp.ActivityHomeScreen;
 import com.minor.vendorapp.Apis.ApiRequest;
 import com.minor.vendorapp.Apis.Callback;
 import com.minor.vendorapp.Helpers.Functions;
@@ -42,13 +43,17 @@ import com.minor.vendorapp.Signup.ShopTimings.FragmentDialogShopTimingsPicker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.minor.vendorapp.Helpers.Regex.validEmailIDRegex;
+import static com.minor.vendorapp.Helpers.Regex.validNamesRegex;
+import static com.minor.vendorapp.Helpers.Regex.validPhoneNumberRegex;
+
 public class ActivitySignup extends AppCompatActivity implements FragmentDialogAddressPicker.CustomLocationListener, FragmentDialogShopTimingsPicker.CustomTimingsObjectListener {
 
     EditText shopName, ownerName, contactNumber, emailAddress, vendorAddress, shopType, shopTimings;
     ImageView shopImage;
     Button signup;
 
-    ObjectLocationDetails objectLocationDetails;
+    ObjectLocationDetails objectLocationDetails = new ObjectLocationDetails();
     JSONObject[] jsonObject = {null, null, null, null, null, null, null};
 
     @Override
@@ -72,6 +77,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
         vendorAddress.setOnClickListener(view -> triggerAddressPicker());
         shopTimings.setOnClickListener(view -> triggerShopTimingsPickerDialog());
         signup.setOnClickListener(view -> signup());
+        findViewById(R.id.tempHome).setOnClickListener(view -> startActivity(new Intent(ActivitySignup.this, ActivityHomeScreen.class)));
 
     }
 
@@ -83,7 +89,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
                     if (report.areAllPermissionsGranted())
                         imageCapture();
                     if (report.isAnyPermissionPermanentlyDenied())
-                        showDexterCustomSettingsDialog();
+                        showDexterCustomSettingsDialog(ActivitySignup.this);
                 }
 
                 @Override
@@ -112,7 +118,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
                     if (report.areAllPermissionsGranted())
                         createAddressPickerDialog();
                     if (report.isAnyPermissionPermanentlyDenied())
-                        showDexterCustomSettingsDialog();
+                        showDexterCustomSettingsDialog(ActivitySignup.this);
                 }
 
                 @Override
@@ -127,13 +133,14 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
     private void createAddressPickerDialog() {
         FragmentDialogAddressPicker fragmentDialogAddressPicker = new FragmentDialogAddressPicker();
+//        FragmentDialogTest fragmentDialogTest = new FragmentDialogTest();
         fragmentDialogAddressPicker.show(getSupportFragmentManager(), "AddressPicker");
     }
 
     @Override
-    public void setAddress(String userAddress, ObjectLocationDetails objectLocationDetails) {
+    public void setAddress(ObjectLocationDetails objectLocationDetails) {
         this.objectLocationDetails = objectLocationDetails;
-        vendorAddress.setText(userAddress);
+        vendorAddress.setText(objectLocationDetails.userGivenAddress);
     }
 
     private void triggerShopTimingsPickerDialog() {
@@ -149,9 +156,9 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
         }
     }
 
-    public void showDexterCustomSettingsDialog() {
+    public void showDexterCustomSettingsDialog(Context context) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(ActivitySignup.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Need Permissions");
         builder.setMessage("This app needs these permissions to use this feature. You can grant them in app settings.");
         builder.setPositiveButton("Settings", (dialog, which) -> {
@@ -182,35 +189,107 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
         JSONObject inputShopTimingsObject = getShopTimingsJsonObject(); //shopTimings : JSON Object
         inputShopImage = Functions.bitmap_to_base64(ActivitySignup.this, ((BitmapDrawable) shopImage.getDrawable()).getBitmap()); //shopImage : String format
 
-//        if (notEmpty(inputShopName) && inputShopName.matches(Regex.validNamesRegex)
-//                && notEmpty(inputOwnerName) && inputOwnerName.matches(Regex.validNamesRegex)
-//                && notEmpty(inputContactNumber) && inputContactNumber.matches(Regex.validPhoneNumberRegex)
-//                && notEmpty(inputEmailAddress) && inputEmailAddress.matches(Regex.validEmailIDRegex)
-//                && notEmpty(inputShopType) && notEmpty(inputShopImage)
-//                && (objectLocationDetails != null) && (inputShopTimingsObject != null)) {
+        if (notEmpty(inputShopName) && inputShopName.matches(validNamesRegex)
+                && notEmpty(inputOwnerName) && inputOwnerName.matches(validNamesRegex)
+                && notEmpty(inputContactNumber) && inputContactNumber.matches(validPhoneNumberRegex)
+                && notEmpty(inputEmailAddress) && inputEmailAddress.matches(validEmailIDRegex)
+                && notEmpty(inputShopType) && notEmpty(inputShopImage)
+                && (objectLocationDetails != null) && (inputShopTimingsObject != null)) {
 
-        //Gives full signup JSON Obj.
-        JSONObject signupJsonObject = getSignupJsonObject(inputContactNumber, inputOwnerName, inputEmailAddress, inputShopName, inputShopType, inputShopImage, inputShopTimingsObject);
-        //Send API Request
-        ApiRequest.callApi(getBaseContext(), HitURL.signup, signupJsonObject, new Callback() {
-            @Override
-            public void response(JSONObject resp) {
-                //Handle Response
-                //Intent to HomeScreen
+            //Gives full signup JSON Obj.
+            JSONObject signupJsonObject = getSignupJsonObject(inputOwnerName, inputShopName, inputEmailAddress, "password", inputContactNumber, inputShopType, inputShopImage, inputShopTimingsObject);
+            Log.i("SignupObj", "" + signupJsonObject);
+            //Send API Request
+            ApiRequest.callApi(getBaseContext(), HitURL.signup, new JSONObject(), new Callback() {
+                @Override
+                public void response(JSONObject resp) {
+                    String status = resp.optString("status");
+                    String message = resp.optString("message");
+
+                    if (status.equalsIgnoreCase("200")) {
+                        //Store data to shared prefs
+                        //Intent to home
+                    } else {
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void error(VolleyError error) {
+                    Functions.show_volley_errors(error, getApplicationContext());
+                }
+            });
+
+        } else {
+            //=========================================Harshit Dawane===========================================//
+            if (notEmpty(inputShopName)) {
+                if (!inputShopName.matches(validNamesRegex)) {
+                    shopName.setError("Invalid name");
+                } else {
+                    shopName.setError(null);
+                }
+            } else {
+                shopName.setError("This field is required.");
+
+            }
+            if (notEmpty(inputOwnerName)) {
+                if (!inputOwnerName.matches(validNamesRegex)) {
+                    ownerName.setError("Invalid name.");
+                } else {
+                    ownerName.setError(null);
+                }
+            } else {
+                ownerName.setError("This field is required.");
             }
 
-            @Override
-            public void error(VolleyError error) {
-                Functions.show_volley_errors(error, getApplicationContext());
+            if (notEmpty(inputContactNumber)) {
+                if (!inputContactNumber.matches(validPhoneNumberRegex)) {
+                    contactNumber.setError("Invalid Contact number.");
+                } else {
+                    contactNumber.setError(null);
+                }
+            } else {
+                contactNumber.setError("This field is required.");
             }
-        });
-        Log.i("Signup", "If" + signupJsonObject);
 
-//        } else {
-//            Log.i("Signup", "Else");
-//            //Handle Regex errors
-//        }
+//            if (notEmpty(inputEmailAddress)) {
+//                if (!inputEmailAddress.matches(validEmailIDRegex)) {
+//                    emailAddress.setError("Invalid email");
+//                } else {
+//                    emailAddress.setError(null);
+//                }
+//            }
 
+            if (notEmpty(String.valueOf(objectLocationDetails))) {
+                vendorAddress.setError("Required address.");
+            } else {
+                vendorAddress.setError(null);
+            }
+
+            if (notEmpty(inputShopType)) {
+                shopType.setError("This field is required.");
+            } else {
+                shopType.setError(null);
+            }
+
+            if (checkImage()) {
+                Log.i("Image", "Eq");
+            } else {
+                Log.i("Image", "Not Eq");
+            }
+
+//            if(inputShopTimingsObject == null){
+//                Toast.makeText(getApplicationContext(),"please select the shop timing",Toast.LENGTH_SHORT).show();
+//            }
+//            if(objectLocationDetails == null){
+//                Toast.makeText(getApplicationContext(),"please provide shop's location/address",Toast.LENGTH_SHORT).show();
+//            }
+        }
+
+    }
+
+    private boolean checkImage() {
+        return ((((BitmapDrawable) shopImage.getDrawable()).getBitmap()).equals(((BitmapDrawable) ((ImageView) findViewById(R.id.sampleShopImage)).getDrawable()).getBitmap()));
     }
 
     private String getInputText(EditText editText) {
@@ -221,18 +300,17 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
         return !(str.isEmpty() || str.equalsIgnoreCase(""));
     }
 
-    private JSONObject getSignupJsonObject(final String contact_no, final String owner_name, final String email, final String shop_name, final String shop_type, final String image, final JSONObject shop_timings) {
+    private JSONObject getSignupJsonObject(final String ownerName, final String shopName, final String email, final String password, final String contactNo, final String shopType, final String shopImage, final JSONObject shopTimings) {
         JSONObject fullObject = new JSONObject();
         try {
-            fullObject.put("contact_no", contact_no);
-            fullObject.put("owner_name", owner_name);
+            fullObject.put("ownerName", ownerName);
+            fullObject.put("shopName", shopName);
             fullObject.put("email", email);
-            fullObject.put("shop_name", shop_name);
-            fullObject.put("shop_type", shop_type);
-            fullObject.put("image", image);
-            fullObject.put("shop_timings", shop_timings);
-//            fullObject.put("user_name", "user_name"); //NEEDED
-//            fullObject.put("password", "password");   //NEEDED
+            fullObject.put("password", password);
+            fullObject.put("contactNo", contactNo);
+            fullObject.put("shopType", shopType);
+            fullObject.put("shopImage", shopImage);
+            fullObject.put("shopTimings", shopTimings);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -241,14 +319,22 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
     private JSONObject addLocationDetails(JSONObject jsonObject) {
         try {
-            jsonObject.put("latitude", objectLocationDetails.latitude);
-            jsonObject.put("longitude", objectLocationDetails.longitude);
-            jsonObject.put("address_line", objectLocationDetails.address_line);
-            jsonObject.put("user_given_address", objectLocationDetails.user_given_address);
-            jsonObject.put("pincode", objectLocationDetails.pincode);
-            jsonObject.put("locality", objectLocationDetails.locality);
-            jsonObject.put("state", objectLocationDetails.state);
-            jsonObject.put("country", objectLocationDetails.country);
+            JSONObject shopAddress, location;
+            shopAddress = new JSONObject();
+            location = new JSONObject();
+
+            shopAddress.put("locality", objectLocationDetails.locality);
+            shopAddress.put("city", objectLocationDetails.city);
+            shopAddress.put("state", objectLocationDetails.state);
+            shopAddress.put("pincode", objectLocationDetails.pincode);
+            shopAddress.put("addressLine", objectLocationDetails.addressLine);
+            shopAddress.put("userGivenAddress", objectLocationDetails.userGivenAddress);
+
+            location.put("latitude", objectLocationDetails.latitude);
+            location.put("longitude", objectLocationDetails.longitude);
+
+            jsonObject.put("shopAddress", shopAddress);
+            jsonObject.put("location", location);
         } catch (JSONException e) {
             e.printStackTrace();
         }

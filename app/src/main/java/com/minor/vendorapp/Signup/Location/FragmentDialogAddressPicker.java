@@ -67,6 +67,7 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
     Marker marker_google;
     private View view;
     private GoogleMap mMap;
+    ObjectLocationDetails objectLocationDetails = new ObjectLocationDetails();
 
     @NonNull
     @Override
@@ -117,7 +118,9 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
 
         saveAddress.setOnClickListener(view1 -> {
             if (!landmark.getText().toString().trim().equalsIgnoreCase("") || !landmark.getText().toString().trim().isEmpty()) {
-                customLocationListener.setAddress(landmark.getText().toString().trim(), new ObjectLocationDetails(1.343d, 1.333d, "locality", "country", "state", "pincode", "address_line", "user_given_address"));
+                objectLocationDetails.userGivenAddress = landmark.getText().toString().trim();
+//                customLocationListener.setAddress(new ObjectLocationDetails(1.343d, 1.333d, "locality", "city", "state", "pincode", "address_line", "user_given_address"));
+                customLocationListener.setAddress(objectLocationDetails);
                 dialog.dismiss();
             } else {
                 landmark.setError("Add Landmark");
@@ -319,6 +322,23 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
                                     if (myaddresses1.get(0).getAddressLine(0) != null) {
                                         address1 += myaddresses1.get(0).getAddressLine(0) + " ";
                                     }
+
+                                    objectLocationDetails.latitude = myaddresses1.get(0).getLatitude(); //lat
+                                    objectLocationDetails.longitude = myaddresses1.get(0).getLongitude(); //long
+                                    objectLocationDetails.locality = ((myaddresses1.get(0).getFeatureName() == null) ? (myaddresses1.get(0).getThoroughfare() == null) ? "null" : myaddresses1.get(0).getThoroughfare() : (myaddresses1.get(0).getThoroughfare() == null) ? myaddresses1.get(0).getFeatureName() : String.format("%1s %2s", myaddresses1.get(0).getFeatureName(), myaddresses1.get(0).getThoroughfare())); //locality
+                                    objectLocationDetails.city = myaddresses1.get(0).getLocality(); //city
+                                    objectLocationDetails.state = myaddresses1.get(0).getAdminArea(); //state
+                                    objectLocationDetails.pincode = myaddresses1.get(0).getPostalCode(); //pin
+                                    objectLocationDetails.addressLine = myaddresses1.get(0).getAddressLine(0); //Full add.
+
+//                                    Log.i("Add", "" + objectLocationDetails.latitude); //Lat
+//                                    Log.i("Add", "" + objectLocationDetails.longitude); //Lon
+//                                    Log.i("Add", "Locality" + objectLocationDetails.locality); //MUMBAI
+//                                    Log.i("Add", "State" + objectLocationDetails.state); //STATE
+//                                    Log.i("Add", "Postal" + objectLocationDetails.pincode); //PIN
+//                                    Log.i("Add", "AddLine" + objectLocationDetails.addressLine); //FULL ADD
+//                                    Log.i("Add", "City" + objectLocationDetails.city); //KANDIVALI
+
                                     generatedAddress.setText(address1);
                                     MarkerOptions markerOptions1 = new MarkerOptions();
                                     markerOptions1.position(userLocation1);
@@ -356,6 +376,6 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
     }
 
     public interface CustomLocationListener {
-        void setAddress(String userAddress, ObjectLocationDetails objectLocationDetails);
+        void setAddress(ObjectLocationDetails objectLocationDetails);
     }
 }
