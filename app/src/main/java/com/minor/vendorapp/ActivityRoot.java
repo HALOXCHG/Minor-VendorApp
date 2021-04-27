@@ -14,7 +14,7 @@ public class ActivityRoot extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_root);
 
-        Intent activity_signup = new Intent(this, ActivitySignup.class);
-        startActivity(activity_signup);
+        Intent i = new Intent(getApplicationContext(), ActivityLogin.class);
+        startActivity(i);
     }
 }
