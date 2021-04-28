@@ -68,7 +68,10 @@ public class FragmentDialogShopTimingsPicker extends DialogFragment {
 
         //Passing User Location Data back to Signup Activity via Interface
         try {
-            customTimingsObjectListener = (FragmentDialogShopTimingsPicker.CustomTimingsObjectListener) getActivity();
+            if (getTargetFragment() != null)
+                customTimingsObjectListener = (FragmentDialogShopTimingsPicker.CustomTimingsObjectListener) getTargetFragment();
+            if (getActivity() != null)
+                customTimingsObjectListener = (FragmentDialogShopTimingsPicker.CustomTimingsObjectListener) getActivity();
         } catch (ClassCastException e) {
             Log.i("TAG", "onAttach: ClassCastException " + e.toString());
         }

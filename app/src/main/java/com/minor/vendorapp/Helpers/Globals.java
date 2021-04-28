@@ -22,8 +22,17 @@ public class Globals {
     public static final String dexterError = "Dexter Error Occurred";
     public static final String prefName = "pref_name";
     //User data
+    public static final String isLogin = "isLogin";
     public static final String shopTypeSelected = "shopTypeSelected";
+    public static final String shopTypePosition = "shopTypePosition";
+    public static final String shopTimingsObject = "shopTimingsObject";
+    public static final String addressObject = "addressObject";
     public static final String shopId = "shopId";
+    public static final String shopName = "shopName";
+    public static final String ownerName = "ownerName";
+    public static final String shopImage = "shopImage";
+    public static final String email = "email";
+    public static final String contactNo = "contactNo";
     //Volley Request Headers
     protected static final String authKey = "asdfgh";
     //Firebase Token

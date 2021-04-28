@@ -1,4 +1,4 @@
-package com.minor.vendorapp.ui.home;
+package com.minor.vendorapp.Nav.Home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package com.minor.vendorapp.ui.products;
+package com.minor.vendorapp.Nav.Products;
 
 import org.json.JSONObject;
 

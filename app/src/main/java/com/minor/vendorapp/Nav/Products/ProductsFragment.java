@@ -1,4 +1,4 @@
-package com.minor.vendorapp.ui.products;
+package com.minor.vendorapp.Nav.Products;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,10 +17,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.VolleyError;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.minor.vendorapp.ActivityProductAdd;
 import com.minor.vendorapp.Apis.ApiRequest;
 import com.minor.vendorapp.Apis.Callback;
 import com.minor.vendorapp.Helpers.Functions;
+import com.minor.vendorapp.Helpers.Globals;
 import com.minor.vendorapp.Helpers.HitURL;
 import com.minor.vendorapp.R;
 
@@ -29,25 +31,40 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class ProductsFragment extends Fragment {
 
     SwipeRefreshLayout swipeRefreshLayout;
     ExtendedFloatingActionButton addProductButton;
     RecyclerView recyclerView;
+    ProgressBar loader;
     LinearLayoutManager linearLayoutManager;
 
     List<DataTransfer> productList;
     AdapterProductsListing adapterProductsListing;
 
+    Boolean callByRefresh = false;
+
     public ProductsFragment() {
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchProducts(getView());
+        Log.i("onResume", "Run");
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_products, container, false);
 
+        Globals.sharedPreferences = getActivity().getSharedPreferences(Globals.prefName, MODE_PRIVATE);
+
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_to_refresh_products);
         addProductButton = (ExtendedFloatingActionButton) view.findViewById(R.id.addProductButton);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_products);
+        loader = (ProgressBar) view.findViewById(R.id.loader);
 
         productList = new ArrayList<>();
         adapterProductsListing = new AdapterProductsListing(productList);
@@ -56,7 +73,7 @@ public class ProductsFragment extends Fragment {
         recyclerView.setAdapter(adapterProductsListing);
 
 
-        fetchProducts(view);
+//        fetchProducts(view);
         swipeToRefreshNews(view);
         addProductButton.setOnClickListener(view1 -> {
             Intent intent = new Intent(getActivity(), ActivityProductAdd.class);
@@ -67,10 +84,16 @@ public class ProductsFragment extends Fragment {
     }
 
     private void fetchProducts(View view) {
+        if (!callByRefresh) {
+            loader.setVisibility(View.VISIBLE);
+        }
+//        swipeRefreshLayout.setEnabled(false);
+//        productList.clear();
+//        adapterProductsListing.notifyDataSetChanged();
+
         JSONObject jsonObject = new JSONObject();
         try {
-//            jsonObject.put("shopId", Globals.sharedPreferences.getString(Globals.shopId, null));
-            jsonObject.put("shopId", "shop1619525798968");
+            jsonObject.put("shopId", Globals.sharedPreferences.getString(Globals.shopId, null));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -80,7 +103,13 @@ public class ProductsFragment extends Fragment {
             public void response(JSONObject resp) {
                 Log.i("Resp", "" + resp);
                 String status = resp.optString("status");
+                String message = resp.optString("message");
                 if (status.equalsIgnoreCase("200")) {
+                    productList.clear();
+                    adapterProductsListing.notifyDataSetChanged();
+
+                    view.findViewById(R.id.productMessage).setVisibility(message.equalsIgnoreCase("No item added yet") ? View.VISIBLE : View.GONE);
+
                     try {
                         JSONArray array = resp.getJSONArray("data");
                         for (int i = 0; i < array.length(); i++) {
@@ -95,81 +124,49 @@ public class ProductsFragment extends Fragment {
                             String sellingPrice = object.optString("sellingPrice");
                             String mrp = object.optString("MRP");
 
-                            Log.i("Data", "Name " + name);
-                            Log.i("Data", "Description " + description);
-                            Log.i("Data", "Quantity" + quantity);
-                            Log.i("Data", "Sell P" + sellingPrice);
-                            Log.i("Data", "MRP " + mrp);
-                            Log.i("Data", "Image " + image);
-
-//                            String image = Functions.bitmapToBase64(getActivity(), ((BitmapDrawable) ((ImageView) view.findViewById(R.id.sampleHomeImage)).getDrawable()).getBitmap());
-//                            String name = "Coffee Sachet";
-//                            String description = "NIce coffee for your lungs and heart";
-//                            String quantity = "2 Units";
-//                            String sellingPrice = "Rs.48";
-//                            String mrp = "Rs.35";
-//                            JSONObject j = new JSONObject();
-//                            j.put("A", "Abc");
-//                            j.put("B", "Bcd");
+//                            Log.i("Data", "Name " + name);
+//                            Log.i("Data", "Description " + description);
+//                            Log.i("Data", "Quantity" + quantity);
+//                            Log.i("Data", "Sell P" + sellingPrice);
+//                            Log.i("Data", "MRP " + mrp);
+//                            Log.i("Data", "Image " + image);
                             productList.add(new DataTransfer(image, name, description, quantity, sellingPrice, mrp, jObj));
                         }
                         adapterProductsListing.notifyDataSetChanged();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
                 }
                 swipeRefreshLayout.setRefreshing(false);
-                swipeRefreshLayout.setEnabled(true);
+                loader.setVisibility(View.GONE);
+                callByRefresh = false;
+//                swipeRefreshLayout.setEnabled(true)
             }
 
             @Override
             public void error(VolleyError error) {
                 Functions.showVolleyErrors(error, getContext());
                 swipeRefreshLayout.setRefreshing(false);
-                swipeRefreshLayout.setEnabled(true);
+                loader.setVisibility(View.GONE);
+                callByRefresh = false;
+//                swipeRefreshLayout.setEnabled(true);
             }
         });
-
-//        String image = Functions.bitmapToBase64(getActivity(), ((BitmapDrawable) ((ImageView) view.findViewById(R.id.sampleHomeImage)).getDrawable()).getBitmap());
-//        String name = "Coffee Sachet Bru cofeee";
-//        String description = "NIce coffee for your lungs and heart Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore Lorem ipsum dolor sit amet";
-//        String quantity = "2 Units";
-//        String sellingPrice = "Rs.43";
-//        String mrp = "Rs. 35";
-//
-//        productList.add(new DataTransfer(image, name, description, quantity, sellingPrice, mrp));
-//        productList.add(new DataTransfer(image, name, description, quantity, sellingPrice, mrp));
-//        adapterProductsListing.notifyDataSetChanged();
-
-//        String image = Functions.bitmapToBase64(getActivity(), ((BitmapDrawable) ((ImageView) view.findViewById(R.id.sampleHomeImage)).getDrawable()).getBitmap());
-//        String name = "Coffee Sachet";
-//        String description = "NIce coffee for your lungs and heart";
-//        String quantity = "2 Units";
-//        String sellingPrice = "Rs.48";
-//        String mrp = "Rs.35";
-//        JSONObject j = new JSONObject();
-//        try {
-//            j.put("A", "Abc");
-//            j.put("B", "Bcd");
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        productList.add(new DataTransfer(image, name, description, quantity, sellingPrice, mrp, j));
-//        productList.add(new DataTransfer(image, "New Prod", "None", "4Litres", "Rs.250", "Rs.175", j));
-//        productList.add(new DataTransfer(image, "New Prod 2", "None None None None None ", "40 Litres", "Rs.2650", "Rs.1675", j));
     }
 
     //Swipe to refresh new section
     private void swipeToRefreshNews(View v) {
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            //Set setRefreshing(false);
-            swipeRefreshLayout.setEnabled(false);
-            //Clear adapter
-            productList.clear();
-            //Notify data changed
-            adapterProductsListing.notifyDataSetChanged();
-            //Fetch data
-            fetchProducts(v);
+            if (!swipeRefreshLayout.canChildScrollUp() && !swipeRefreshLayout.isRefreshing()) {
+//                swipeRefreshLayout.setRefreshing(true);
+                callByRefresh = true;
+                Log.i("Swipe", "" + swipeRefreshLayout.canChildScrollUp());
+                Log.i("Swipe", "" + swipeRefreshLayout.isRefreshing());
+                //Fetch data
+                fetchProducts(v);
+            }
         });
     }
 }

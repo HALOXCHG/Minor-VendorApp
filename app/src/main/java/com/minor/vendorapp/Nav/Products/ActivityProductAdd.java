@@ -1,4 +1,4 @@
-package com.minor.vendorapp;
+package com.minor.vendorapp.Nav.Products;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -34,6 +34,7 @@ import com.minor.vendorapp.Helpers.Functions;
 import com.minor.vendorapp.Helpers.Globals;
 import com.minor.vendorapp.Helpers.HitURL;
 import com.minor.vendorapp.Helpers.PermissionCallback;
+import com.minor.vendorapp.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,9 +61,9 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_add);
 
+        Intent intent = getIntent();
         b = getIntent().hasExtra("Object");
 
-        Intent intent = getIntent();
         Globals.sharedPreferences = this.getSharedPreferences(Globals.prefName, MODE_PRIVATE);
 
         productName = (EditText) findViewById(R.id.productName);
@@ -83,7 +84,7 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
         productImage.setOnClickListener(view -> triggerImageCapture());
         addProduct.setOnClickListener(view -> addProduct());
 
-        if (intent.hasExtra("Object")) {
+        if (b) {
             TextView t = (TextView) findViewById(R.id.addProductHeading);
             t.setText("Edit Product");
             try {
@@ -107,15 +108,15 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
         quantity.setText(jObj.optString("itemInStock"));
         sellingPrice.setText(object.optString("sellingPrice"));
         mrp.setText(object.optString("MRP"));
+        productImage.setImageBitmap(Functions.base64ToBitmap(jObj.optString("itemImage")));
 
         productType.setSelection(productTypeAdapter.getPosition(jObj.optString("itemType")));
         units.setSelection(unitsAdapter.getPosition(jObj.optString("itemUnit")));
 
-        String image = jObj.optString("itemImage");
+//        String image = jObj.optString("itemImage");
 
         //If user CANNOT edit these
-//        productName.setEnabled(false);
-//        productType.setEnabled(false);
+        productType.setEnabled(false);
     }
 
     private void triggerImageCapture() {
@@ -169,12 +170,14 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
 
             JSONObject jsonObject = getProductObject(inputProductName, inputAvailableStock, inputMrp, inputSellingPrice, inputShopImage, inputProductType, inputUnits, inputQuantity, inputProductDescription);
             Log.i("AddProduct", "If Passed " + jsonObject);
-            finish();
 
-            ApiRequest.callApi(getApplicationContext(), HitURL.addProduct, jsonObject, new Callback() {
+            ApiRequest.callApi(getApplicationContext(), b ? HitURL.updateProduct : HitURL.addProduct, jsonObject, new Callback() {
                 @Override
                 public void response(JSONObject resp) {
                     //Finish Activity
+                    Log.i("Response", " " + resp);
+                    Toast.makeText(getApplicationContext(), "Product Added", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
 
                 @Override
@@ -222,14 +225,14 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
 
     private void setUnitsSpinner() {
         units.setOnItemSelectedListener(this);
-        unitsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Globals.productUnitsList[Globals.sharedPreferences.getInt(Globals.shopTypeSelected, 0)]);
+        unitsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Globals.productUnitsList[Globals.sharedPreferences.getInt(Globals.shopTypePosition, 0)]);
         unitsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         units.setAdapter(unitsAdapter);
     }
 
     private void setProductTypeSpinner() {
         productType.setOnItemSelectedListener(this);
-        productTypeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Globals.shopTypeSubList[Globals.sharedPreferences.getInt(Globals.shopTypeSelected, 0)]);
+        productTypeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Globals.shopTypeSubList[Globals.sharedPreferences.getInt(Globals.shopTypePosition, 0)]);
         productTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         productType.setAdapter(productTypeAdapter);
     }
@@ -279,7 +282,7 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
             typeOfProduct = adapterView.getItemAtPosition(i).toString();
         if (adapterView.getId() == R.id.units)
             unit = adapterView.getItemAtPosition(i).toString();
-//        Toast.makeText(getApplicationContext(), adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

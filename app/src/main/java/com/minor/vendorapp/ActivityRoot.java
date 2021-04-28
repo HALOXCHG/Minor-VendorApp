@@ -5,7 +5,9 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.minor.vendorapp.Signup.ActivitySignup;
+import com.minor.vendorapp.Helpers.Globals;
+import com.minor.vendorapp.Login.ActivityLogin;
+import com.minor.vendorapp.Nav.ActivityHomeScreen;
 
 public class ActivityRoot extends AppCompatActivity {
 
@@ -14,7 +16,16 @@ public class ActivityRoot extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_root);
 
-        Intent i = new Intent(getApplicationContext(), ActivityLogin.class);
-        startActivity(i);
+        Globals.sharedPreferences = getSharedPreferences(Globals.prefName, MODE_PRIVATE);
+
+        if (Globals.sharedPreferences.getBoolean(Globals.isLogin, false)) {
+            Intent i = new Intent(getApplicationContext(), ActivityHomeScreen.class);
+            startActivity(i);
+            finish();
+        } else {
+            Intent i = new Intent(getApplicationContext(), ActivityLogin.class);
+            startActivity(i);
+            finish();
+        }
     }
 }

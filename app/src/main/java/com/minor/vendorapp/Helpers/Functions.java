@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Base64;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -29,11 +28,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 public class Functions {
@@ -67,11 +61,46 @@ public class Functions {
                 .check();
     }
 
-    public static void storeSignupData(JSONObject jsonObject) {
+    public static void storeSignupData(String shopName, String ownerName, String shopImage, String email, String contactNo) {
         SharedPreferences.Editor editor = Globals.sharedPreferences.edit();
 
-        editor.putString("avc", jsonObject.optString("avc"));
+        editor.putString(Globals.shopName, shopName);
+        editor.putString(Globals.ownerName, ownerName);
+        editor.putString(Globals.shopImage, shopImage);
+        editor.putString(Globals.email, email);
+        editor.putString(Globals.contactNo, contactNo);
+        editor.putBoolean(Globals.isLogin, true);
 
+        editor.apply();
+    }
+
+    public static void storeShopId(String id) {
+        SharedPreferences.Editor editor = Globals.sharedPreferences.edit();
+        editor.putString(Globals.shopId, id);
+        editor.apply();
+    }
+
+    public static void storeShopPosition(int i) {
+        SharedPreferences.Editor editor = Globals.sharedPreferences.edit();
+        editor.putInt(Globals.shopTypePosition, i);
+        editor.apply();
+    }
+
+    public static void storeShopType(String shopType) {
+        SharedPreferences.Editor editor = Globals.sharedPreferences.edit();
+        editor.putString(Globals.shopTypeSelected, shopType);
+        editor.apply();
+    }
+
+    public static void storeShopTimingsObject(JSONObject jsonObject) {
+        SharedPreferences.Editor editor = Globals.sharedPreferences.edit();
+        editor.putString(Globals.shopTimingsObject, jsonObject.toString());
+        editor.apply();
+    }
+
+    public static void storeAddressObject(JSONObject jsonObject) {
+        SharedPreferences.Editor editor = Globals.sharedPreferences.edit();
+        editor.putString(Globals.addressObject, jsonObject.toString());
         editor.apply();
     }
 
@@ -82,27 +111,10 @@ public class Functions {
     }
 
     public static Bitmap base64ToBitmap(String b64) {
-//        byte[] imageAsBytes = Base64.decode(b64.getBytes(), Base64.DEFAULT);
-//        return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
-
-        try {
-            URL url = new URL(b64);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
-        } catch (MalformedURLException e) {
-            // Log exception
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static void logout() {
-        Log.i("TAG", "Logout user");
+        byte[] imageAsBytes = Base64.decode(b64, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+//        byte[] dec = Base64.decode(b64, Base64.DEFAULT);
+//        Bitmap decByte = BitmapFactory.decodeByteArray(dec, 0, dec.length);
     }
 
     //Redirect to browser
@@ -154,4 +166,3 @@ public class Functions {
         }
     }
 }
-

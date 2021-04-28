@@ -43,6 +43,19 @@
         app:layout_constraintTop_toTopOf="@+id/textView"
         app:srcCompat="@drawable/shops" />
 
+    <ImageView
+        android:id="@+id/sampleErrorImage"
+        android:layout_width="97dp"
+        android:layout_height="84dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="60dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView"
+        app:srcCompat="@drawable/image_error" />
+
     <EditText
         android:id="@+id/shopName"
         android:layout_width="wrap_content"
@@ -52,7 +65,7 @@
         android:backgroundTint="@color/textfield_tint"
         android:ems="10"
         android:hint="Shop Name"
-        android:inputType="textPersonName"
+        android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/ownerName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/shopImage"
@@ -75,20 +88,20 @@
         app:layout_constraintStart_toEndOf="@+id/shopImage"
         app:layout_constraintTop_toBottomOf="@+id/shopName" />
 
-    <EditText
-        android:id="@+id/contactNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginTop="25dp"
-        android:background="@android:color/transparent"
-        android:backgroundTint="@color/textfield_tint"
-        android:ems="10"
-        android:hint="Phone Number"
-        android:inputType="phone"
-        app:layout_constraintEnd_toEndOf="@+id/shopName"
-        app:layout_constraintStart_toStartOf="@+id/shopImage"
-        app:layout_constraintTop_toBottomOf="@+id/shopImage" />
+    <!--    <EditText-->
+    <!--        android:id="@+id/contactNumber"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginHorizontal="30dp"-->
+    <!--        android:layout_marginTop="25dp"-->
+    <!--        android:background="@android:color/transparent"-->
+    <!--        android:backgroundTint="@color/textfield_tint"-->
+    <!--        android:ems="10"-->
+    <!--        android:hint="Phone Number"-->
+    <!--        android:inputType="phone"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/shopName"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/shopImage"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/shopImage" />-->
 
     <EditText
         android:id="@+id/emailAddress"
@@ -102,9 +115,8 @@
         android:hint="Email Address"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="@+id/shopName"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/shopImage"
-        app:layout_constraintTop_toBottomOf="@+id/contactNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/shopImage" />
 
     <EditText
         android:id="@+id/vendorAddress"

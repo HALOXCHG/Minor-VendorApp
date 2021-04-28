@@ -69,6 +69,10 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
     private GoogleMap mMap;
     ObjectLocationDetails objectLocationDetails = new ObjectLocationDetails();
 
+    Boolean isAddressSet = getArguments() != null;
+    String userAdd;
+    Double userLatitude, userLongitude;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -110,11 +114,19 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
             activity = getActivity();
             context = getContext();
         }
+        isAddressSet = getArguments() != null;
+        if (isAddressSet) {
+            userAdd = getArguments().getString("userGivenAddress");
+            userLatitude = getArguments().getDouble("latitude");
+            userLongitude = getArguments().getDouble("longitude");
+        }
 
         generatedAddress = view.findViewById(R.id.generatedAddress);
         landmark = view.findViewById(R.id.landmark);
         saveAddress = view.findViewById(R.id.saveAddress);
         marker = view.findViewById(R.id.markerImage);
+
+        landmark.setText(isAddressSet ? userAdd : null);
 
         saveAddress.setOnClickListener(view1 -> {
             if (!landmark.getText().toString().trim().equalsIgnoreCase("") || !landmark.getText().toString().trim().isEmpty()) {
@@ -136,7 +148,10 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
         this.context = context;
         //Passing User Location Data back to Signup Activity via Interface
         try {
-            customLocationListener = (FragmentDialogAddressPicker.CustomLocationListener) getActivity();
+            if (getTargetFragment() != null)
+                customLocationListener = (FragmentDialogAddressPicker.CustomLocationListener) getTargetFragment();
+            if (getActivity() != null)
+                customLocationListener = (FragmentDialogAddressPicker.CustomLocationListener) getActivity();
         } catch (ClassCastException e) {
             Log.i("Test", "onAttach: ClassCastException " + e.toString());
         }
@@ -189,32 +204,32 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
             }
         };
 
-        if (Build.VERSION.SDK_INT < 23) {
-            if (ActivityCompat.checkSelfPermission(context,
-                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            mMap.setMyLocationEnabled(true);
-
-        } else {
-            if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            } else {
-                mMap.setMyLocationEnabled(true);
-                mMap.setMaxZoomPreference(18f);
-
-                fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
-                    Location location = task.getResult();
-                    if (location != null) {
-                        getUserLocation(location);
-                    }
-                });
-                mMap.clear();
-            }
-        }
+//        if (Build.VERSION.SDK_INT < 23) {
+//            if (ActivityCompat.checkSelfPermission(context,
+//                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+//                    && ActivityCompat.checkSelfPermission(context,
+//                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                return;
+//            }
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+//            mMap.setMyLocationEnabled(true);
+//
+//        } else {
+//            if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+//            } else {
+//                mMap.setMyLocationEnabled(true);
+//                mMap.setMaxZoomPreference(18f);
+//
+//                fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+//                    Location location = task.getResult();
+//                    if (location != null) {
+//                        getUserLocation(location);
+//                    }
+//                });
+//                mMap.clear();
+//            }
+//        }
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Functions.requestPermissions(getContext(), new PermissionCallback() {
@@ -232,6 +247,10 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
                             fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
                                 Location location = task.getResult();
                                 if (location != null) {
+                                    if (isAddressSet) {
+                                        location.setLatitude(userLatitude);
+                                        location.setLongitude(userLongitude);
+                                    }
                                     getUserLocation(location);
                                     Log.i("run", "on complete");
 
@@ -261,6 +280,10 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
                 fusedLocationProviderClient.getLastLocation().addOnCompleteListener(task -> {
                     Location location = task.getResult();
                     if (location != null) {
+                        if (isAddressSet) {
+                            location.setLatitude(userLatitude);
+                            location.setLongitude(userLongitude);
+                        }
                         getUserLocation(location);
                         Log.i("run", "on complete");
 

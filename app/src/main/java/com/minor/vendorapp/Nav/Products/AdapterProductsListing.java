@@ -1,9 +1,8 @@
-package com.minor.vendorapp.ui.products;
+package com.minor.vendorapp.Nav.Products;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.minor.vendorapp.ActivityProductAdd;
 import com.minor.vendorapp.Helpers.Functions;
 import com.minor.vendorapp.R;
 
@@ -48,14 +46,10 @@ class AdapterProductsListing extends RecyclerView.Adapter<AdapterProductsListing
 
         holder.tileDetailProductDescription.setText(list.get(position).getDescription());
         holder.tileDetailProductQuantity.setText(list.get(position).getQuantity());
-        holder.tileDetailProductSellingPrice.setText(list.get(position).getSellingPrice());
-
-        holder.tileDetailProductMRP.setText(list.get(position).getMRP());
+        holder.tileDetailProductSellingPrice.setText(String.format("Rs. %s", list.get(position).getSellingPrice()));
+        holder.tileDetailProductMRP.setText(String.format("Rs. %s", list.get(position).getMRP()));
         holder.tileDetailProductMRP.setPaintFlags(holder.tileDetailProductMRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
         holder.tileDetailProductImage.setImageBitmap(Functions.base64ToBitmap(list.get(position).getImage()));
-//        holder.tileDetailProductImage.setImageResource(null);
-        Log.i("Photo", "" + Functions.base64ToBitmap(list.get(position).getImage()));
 
         holder.itemView.setOnClickListener(view -> {
 //            Toast.makeText(context, " "+ position, Toast.LENGTH_SHORT).show();

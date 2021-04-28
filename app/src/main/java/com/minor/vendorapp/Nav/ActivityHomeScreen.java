@@ -1,7 +1,11 @@
-package com.minor.vendorapp;
+package com.minor.vendorapp.Nav;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -9,8 +13,30 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.minor.vendorapp.Helpers.Globals;
+import com.minor.vendorapp.Login.ActivityLogin;
+import com.minor.vendorapp.R;
+
 
 public class ActivityHomeScreen extends AppCompatActivity {
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.logout) {
+            Globals.sharedPreferences.edit().clear().apply();
+            Intent intent = new Intent(getApplicationContext(), ActivityLogin.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -16,17 +16,30 @@
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.MinorVendorApp">
-        <activity android:name=".ActivityPreSignUp"/>
-        <activity android:name=".ActivityLogin"/>
         <activity
-            android:name=".ActivityHomeScreen"
-            android:label="@string/title_activity_home_screen" />
+            android:name=".Signup.ActivityPreSignUp"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".ActivityProductAdd" />
+        <activity
+            android:name=".Login.ActivityLogin"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".Signup.ActivitySignup" />
+        <activity
+            android:name=".Nav.ActivityHomeScreen"
+            android:label="@string/title_activity_home_screen"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".ActivityRoot">
+        <activity
+            android:name=".Nav.Products.ActivityProductAdd"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".Signup.ActivitySignup"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ActivityRoot"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
