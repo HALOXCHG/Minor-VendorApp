@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.NetworkError;
@@ -27,6 +29,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 public class Functions {
@@ -68,10 +75,30 @@ public class Functions {
         editor.apply();
     }
 
-    public static String bitmap_to_base64(Activity activity, Bitmap imagebitmap) {
+    public static String bitmapToBase64(Activity activity, Bitmap imagebitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         imagebitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
         return Base64.encodeToString(baos.toByteArray(), 0);
+    }
+
+    public static Bitmap base64ToBitmap(String b64) {
+//        byte[] imageAsBytes = Base64.decode(b64.getBytes(), Base64.DEFAULT);
+//        return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+
+        try {
+            URL url = new URL(b64);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            return BitmapFactory.decodeStream(input);
+        } catch (MalformedURLException e) {
+            // Log exception
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static void logout() {
@@ -79,7 +106,7 @@ public class Functions {
     }
 
     //Redirect to browser
-    public static void redirect_to_browser(Context context, String url) {
+    public static void redirectToBrowser(Context context, String url) {
         Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(url));
         context.startActivity(intent);
     }
@@ -103,7 +130,15 @@ public class Functions {
         }
     }
 
-    public static void show_volley_errors(VolleyError error, final Context context) {
+    public static String getInputText(EditText editText) {
+        return editText.getText().toString().trim();
+    }
+
+    public static Boolean notEmpty(String str) {
+        return !(str.isEmpty() || str.equalsIgnoreCase(""));
+    }
+
+    public static void showVolleyErrors(VolleyError error, final Context context) {
         if (error instanceof NoConnectionError) {
             Toast.makeText(context, "No internet connection detected.", Toast.LENGTH_SHORT).show();
         } else if (error instanceof NetworkError) {
@@ -115,7 +150,7 @@ public class Functions {
         } else if (error instanceof TimeoutError) {
             Toast.makeText(context, "Connection timed out. Try again later.", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, Globals.error_unknown, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, Globals.errorUnknown, Toast.LENGTH_SHORT).show();
         }
     }
 }

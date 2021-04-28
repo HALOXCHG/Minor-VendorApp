@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -26,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.android.volley.VolleyError;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.listener.DexterError;
 import com.minor.vendorapp.ActivityHomeScreen;
@@ -43,6 +45,9 @@ import com.minor.vendorapp.Signup.ShopTimings.FragmentDialogShopTimingsPicker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.minor.vendorapp.Helpers.Functions.getInputText;
+import static com.minor.vendorapp.Helpers.Functions.notEmpty;
+import static com.minor.vendorapp.Helpers.Globals.shopTypeList;
 import static com.minor.vendorapp.Helpers.Regex.validEmailIDRegex;
 import static com.minor.vendorapp.Helpers.Regex.validNamesRegex;
 import static com.minor.vendorapp.Helpers.Regex.validPhoneNumberRegex;
@@ -55,6 +60,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
     ObjectLocationDetails objectLocationDetails = new ObjectLocationDetails();
     JSONObject[] jsonObject = {null, null, null, null, null, null, null};
+    int shopTypeChoice = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +80,28 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
         signup = findViewById(R.id.signup);
 
         shopImage.setOnClickListener(view -> triggerImageCapture());
+        shopType.setOnClickListener(view -> getShopType());
         vendorAddress.setOnClickListener(view -> triggerAddressPicker());
         shopTimings.setOnClickListener(view -> triggerShopTimingsPickerDialog());
         signup.setOnClickListener(view -> signup());
         findViewById(R.id.tempHome).setOnClickListener(view -> startActivity(new Intent(ActivitySignup.this, ActivityHomeScreen.class)));
 
+    }
+
+    private void getShopType() {
+        new MaterialAlertDialogBuilder(ActivitySignup.this)
+                .setSingleChoiceItems(shopTypeList, shopTypeChoice, (dialogInterface, i) -> {
+                    shopType.setText(shopTypeList[i]);
+                    shopTypeChoice = i;
+
+                    SharedPreferences.Editor editor = Globals.sharedPreferences.edit();
+                    editor.putInt(Globals.shopTypeSelected, i);
+                    editor.apply();
+
+                    dialogInterface.dismiss();
+                })
+                // Single-choice items (initialized with checked item)
+                .show();
     }
 
     private void triggerImageCapture() {
@@ -94,7 +117,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
                 @Override
                 public void errorListener(DexterError error) {
-                    Toast.makeText(getApplicationContext(), Globals.dexter_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), Globals.dexterError, Toast.LENGTH_SHORT).show();
                 }
             }, Manifest.permission.CAMERA);
         } else {
@@ -123,7 +146,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
                 @Override
                 public void errorListener(DexterError error) {
-                    Toast.makeText(getApplicationContext(), Globals.dexter_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), Globals.dexterError, Toast.LENGTH_SHORT).show();
                 }
             }, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION);
         } else {
@@ -188,7 +211,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
 
         JSONObject inputShopTimingsObject = getShopTimingsJsonObject(); //shopTimings : JSON Object
-        inputShopImage = Functions.bitmap_to_base64(ActivitySignup.this, ((BitmapDrawable) shopImage.getDrawable()).getBitmap()); //shopImage : String format
+        inputShopImage = Functions.bitmapToBase64(ActivitySignup.this, ((BitmapDrawable) shopImage.getDrawable()).getBitmap()); //shopImage : String format
 
         if (notEmpty(inputShopName) && inputShopName.matches(validNamesRegex)
                 && notEmpty(inputOwnerName) && inputOwnerName.matches(validNamesRegex)
@@ -201,13 +224,14 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
             JSONObject signupJsonObject = getSignupJsonObject(inputOwnerName, inputShopName, inputEmailAddress, "password", inputContactNumber, inputShopType, inputShopImage, inputShopTimingsObject);
             Log.i("SignupObj", "" + signupJsonObject);
             //Send API Request
-            ApiRequest.callApi(getBaseContext(), HitURL.signup, new JSONObject(), new Callback() {
+            ApiRequest.callApi(getBaseContext(), HitURL.signup, signupJsonObject, new Callback() {
                 @Override
                 public void response(JSONObject resp) {
                     String status = resp.optString("status");
                     String message = resp.optString("message");
 
                     if (status.equalsIgnoreCase("200")) {
+                        //Store shopType array pos. to shared pref
                         //Store data to shared prefs
                         //Intent to home
                     } else {
@@ -217,7 +241,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
                 @Override
                 public void error(VolleyError error) {
-                    Functions.show_volley_errors(error, getApplicationContext());
+                    Functions.showVolleyErrors(error, getApplicationContext());
                 }
             });
 
@@ -273,7 +297,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
                 shopType.setError(null);
             }
 
-            if (checkImage()) {
+            if (isImageUploaded()) {
                 Log.i("Image", "Eq");
             } else {
                 Log.i("Image", "Not Eq");
@@ -289,16 +313,8 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
     }
 
-    private boolean checkImage() {
+    private boolean isImageUploaded() {
         return ((((BitmapDrawable) shopImage.getDrawable()).getBitmap()).equals(((BitmapDrawable) ((ImageView) findViewById(R.id.sampleShopImage)).getDrawable()).getBitmap()));
-    }
-
-    private String getInputText(EditText editText) {
-        return editText.getText().toString().trim();
-    }
-
-    private Boolean notEmpty(String str) {
-        return !(str.isEmpty() || str.equalsIgnoreCase(""));
     }
 
     private JSONObject getSignupJsonObject(final String ownerName, final String shopName, final String email, final String password, final String contactNo, final String shopType, final String shopImage, final JSONObject shopTimings) {
@@ -307,11 +323,11 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
             fullObject.put("ownerName", ownerName);
             fullObject.put("shopName", shopName);
             fullObject.put("email", email);
-            fullObject.put("password", password);
+            fullObject.put("password", "Asdfghjkkk");
             fullObject.put("contactNo", contactNo);
             fullObject.put("shopType", shopType);
-            fullObject.put("shopImage", shopImage);
             fullObject.put("shopTimings", shopTimings);
+            fullObject.put("shopImage", shopImage);
         } catch (JSONException e) {
             e.printStackTrace();
         }

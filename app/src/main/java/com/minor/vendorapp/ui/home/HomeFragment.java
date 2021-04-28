@@ -26,18 +26,12 @@ public class HomeFragment extends Fragment {
 
         final TextView textView = root.findViewById(R.id.text_home);
 
-        root.findViewById(R.id.addProduct).setOnClickListener(view -> {
-
-        });
-
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
         });
-
-
         return root;
     }
 }
