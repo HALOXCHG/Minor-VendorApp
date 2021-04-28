@@ -9,3 +9,4 @@ public interface PermissionCallback {
 
     void errorListener(DexterError error);
 }
+

@@ -379,3 +379,4 @@ public class FragmentDialogAddressPicker extends DialogFragment implements OnMap
         void setAddress(ObjectLocationDetails objectLocationDetails);
     }
 }
+

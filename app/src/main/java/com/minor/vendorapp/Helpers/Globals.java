@@ -32,3 +32,4 @@ public class Globals {
     //Shared Prefs.
     public static SharedPreferences sharedPreferences;
 }
+

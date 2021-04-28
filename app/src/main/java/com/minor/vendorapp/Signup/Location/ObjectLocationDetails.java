@@ -19,3 +19,4 @@ public class ObjectLocationDetails {
         this.userGivenAddress = userGivenAddress;
     }
 }
+

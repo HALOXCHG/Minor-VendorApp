@@ -63,6 +63,7 @@
         android:id="@+id/ownerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
         android:layout_marginBottom="10dp"
         android:background="@android:color/transparent"
         android:backgroundTint="@color/textfield_tint"
@@ -71,7 +72,8 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="@+id/shopImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/shopImage" />
+        app:layout_constraintStart_toEndOf="@+id/shopImage"
+        app:layout_constraintTop_toBottomOf="@+id/shopName" />
 
     <EditText
         android:id="@+id/contactNumber"

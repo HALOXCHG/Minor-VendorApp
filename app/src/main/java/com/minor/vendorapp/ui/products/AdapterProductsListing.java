@@ -87,3 +87,4 @@ class AdapterProductsListing extends RecyclerView.Adapter<AdapterProductsListing
         }
     }
 }
+

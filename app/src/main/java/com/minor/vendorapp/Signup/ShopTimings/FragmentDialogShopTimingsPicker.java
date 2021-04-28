@@ -200,3 +200,4 @@ public class FragmentDialogShopTimingsPicker extends DialogFragment {
         void returnObject(@NonNull JSONObject[] jsonObject);
     }
 }
+

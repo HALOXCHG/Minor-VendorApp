@@ -45,3 +45,4 @@ class DataTransfer {
         return jsonObject;
     }
 }
+

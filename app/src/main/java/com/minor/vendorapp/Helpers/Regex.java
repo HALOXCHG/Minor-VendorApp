@@ -13,3 +13,4 @@ public class Regex {
     public static final String validCompanyRegex = "^[a-zA-Z0-9&.\\s]{0,50}$";
     public static final String validAddressRegex = "^[a-zA-Z0-9-,().\\s]{1,100}$";
 }
+

@@ -355,3 +355,4 @@ public class FragmentDialogTest extends DialogFragment implements OnMapReadyCall
         void setAddress(String userAddress, ObjectLocationDetails objectLocationDetails);
     }
 }
+
