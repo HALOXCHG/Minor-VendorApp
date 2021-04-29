@@ -3,6 +3,7 @@ package com.minor.vendorapp.Login;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -78,12 +79,14 @@ public class ActivityLogin extends AppCompatActivity {
 
                         try {
                             JSONObject data = new JSONObject(resp.optJSONObject("data").toString());
+                            Log.i("Resp", "" + resp);
 
                             storeShopId(data.optString("shopId"));
                             storeShopType(data.optString("shopType"));
                             storeShopPosition(getShopPosition(data.optString("shopType")));
                             storeShopTimingsObject(getShopTimingDetails(data));
                             storeAddressObject(getLocationDetails(data));
+                            Log.i("Location", "" + getLocationDetails(data));
                             storeSignupData(data.optString("shopName"), data.optString("ownerName"), data.optString("shopImage"), data.optString("email"), data.optString("contactNo"));
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -147,7 +150,13 @@ public class ActivityLogin extends AppCompatActivity {
     private JSONObject getLocationDetails(JSONObject jsonObject) {
         JSONObject returnObj = new JSONObject();
         try {
-            returnObj.put("location", jsonObject.optJSONObject("location"));
+            JSONObject j = jsonObject.optJSONObject("location");
+            JSONObject lat = j.optJSONObject("latitude");
+            JSONObject lon = j.optJSONObject("longitude");
+            JSONObject obj = new JSONObject();
+            obj.put("latitude", lat.optString("$numberDecimal"));
+            obj.put("longitude", lon.optString("$numberDecimal"));
+            returnObj.put("location", obj);
             returnObj.put("shopAddress", jsonObject.optJSONObject("shopAddress"));
 //            old.locality = shopAddress.optString("locality");
 //            old.city = shopAddress.optString("city");

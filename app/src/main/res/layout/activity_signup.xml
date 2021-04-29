@@ -188,17 +188,17 @@
         app:layout_constraintStart_toStartOf="@+id/shopImage"
         app:layout_constraintTop_toBottomOf="@+id/shopTimings" />
 
-    <Button
-        android:id="@+id/tempHome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="25dp"
-        android:layout_marginTop="25dp"
-        android:paddingVertical="10dp"
-        android:text="Temp. Home"
-        app:layout_constraintEnd_toEndOf="@+id/ownerName"
-        app:layout_constraintStart_toStartOf="@+id/shopImage"
-        app:layout_constraintTop_toBottomOf="@+id/signup" />
+    <!--    <Button-->
+    <!--        android:id="@+id/tempHome"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginHorizontal="25dp"-->
+    <!--        android:layout_marginTop="25dp"-->
+    <!--        android:paddingVertical="10dp"-->
+    <!--        android:text="Temp. Home"-->
+    <!--        app:layout_constraintEnd_toEndOf="@+id/ownerName"-->
+    <!--        app:layout_constraintStart_toStartOf="@+id/shopImage"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/signup" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

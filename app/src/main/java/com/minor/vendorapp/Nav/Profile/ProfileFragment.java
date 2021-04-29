@@ -197,13 +197,13 @@ public class ProfileFragment extends Fragment implements FragmentDialogAddressPi
             if (!isImageUploaded())
                 profileShopImage.setImageResource(R.drawable.image_error);
 
-            if (inputShopTimingsObject == null) {
-                Toast.makeText(getContext(), "Please select the Shop Timings.", Toast.LENGTH_SHORT).show();
-            }
-
-            if (objectLocationDetails == null) {
-                Toast.makeText(getContext(), "Please provide Shop's location/address.", Toast.LENGTH_SHORT).show();
-            }
+//            if (inputShopTimingsObject == null) {
+//                Toast.makeText(getContext(), "Please select the Shop Timings.", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            if (objectLocationDetails == null) {
+//                Toast.makeText(getContext(), "Please provide Shop's location/address.", Toast.LENGTH_SHORT).show();
+//            }
         }
 //        SharedPreferences.Editor editor = Globals.sharedPreferences.edit();
 //

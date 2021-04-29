@@ -55,6 +55,7 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
     String typeOfProduct, unit;
     ArrayAdapter<String> productTypeAdapter, unitsAdapter;
     Boolean b;
+    String itemId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,7 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
 
         JSONObject object = jObj.optJSONObject("price");
 
+        itemId = jObj.optString("itemId");
         productName.setText(jObj.optString("itemName"));
         availableStock.setText(jObj.optString("itemInStock"));
         productDescription.setText(jObj.optString("itemDescription"));
@@ -109,6 +111,8 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
         sellingPrice.setText(object.optString("sellingPrice"));
         mrp.setText(object.optString("MRP"));
         productImage.setImageBitmap(Functions.base64ToBitmap(jObj.optString("itemImage")));
+        productImage.setPadding(0, 0, 0, 0);
+        productImage.setBackground(null);
 
         productType.setSelection(productTypeAdapter.getPosition(jObj.optString("itemType")));
         units.setSelection(unitsAdapter.getPosition(jObj.optString("itemUnit")));
@@ -176,7 +180,7 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
                 public void response(JSONObject resp) {
                     //Finish Activity
                     Log.i("Response", " " + resp);
-                    Toast.makeText(getApplicationContext(), "Product Added", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Product Added", Toast.LENGTH_SHORT).show();
                     finish();
                 }
 
@@ -208,6 +212,7 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
             price.put("sellingPrice", sellingPrice);
             price.put("MRP", MRP);
 
+            jsonObject.put("itemId", itemId);
             jsonObject.put("shopId", Globals.sharedPreferences.getString(Globals.shopId, null));
             jsonObject.put("itemName", itemName);
             jsonObject.put("itemInStock", itemInStock);
@@ -282,7 +287,7 @@ public class ActivityProductAdd extends AppCompatActivity implements AdapterView
             typeOfProduct = adapterView.getItemAtPosition(i).toString();
         if (adapterView.getId() == R.id.units)
             unit = adapterView.getItemAtPosition(i).toString();
-        Toast.makeText(getApplicationContext(), adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

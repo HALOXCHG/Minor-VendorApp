@@ -3,7 +3,7 @@ package com.minor.vendorapp.Helpers;
 public class HitURL {
 
     //URL Path
-    protected static final String urlPath = "https://e84ddb05024a.ngrok.io/";
+    protected static final String urlPath = "https://db0f1813760d.ngrok.io/";
 
     //URL's
 

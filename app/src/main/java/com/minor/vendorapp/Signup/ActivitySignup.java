@@ -86,7 +86,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
         vendorAddress.setOnClickListener(view -> triggerAddressPicker());
         shopTimings.setOnClickListener(view -> triggerShopTimingsPickerDialog());
         signup.setOnClickListener(view -> signup());
-        findViewById(R.id.tempHome).setOnClickListener(view -> startActivity(new Intent(ActivitySignup.this, ActivityHomeScreen.class)));
+//        findViewById(R.id.tempHome).setOnClickListener(view -> startActivity(new Intent(ActivitySignup.this, ActivityHomeScreen.class)));
 
     }
 
@@ -310,13 +310,13 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
             if (!isImageUploaded())
                 shopImage.setImageResource(R.drawable.image_error);
 
-            if (inputShopTimingsObject == null) {
-                Toast.makeText(getApplicationContext(), "Please select the Shop Timings.", Toast.LENGTH_SHORT).show();
-            }
-
-            if (objectLocationDetails == null) {
-                Toast.makeText(getApplicationContext(), "Please provide Shop's location/address.", Toast.LENGTH_SHORT).show();
-            }
+//            if (inputShopTimingsObject == null) {
+//                Toast.makeText(getApplicationContext(), "Please select the Shop Timings.", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            if (objectLocationDetails == null) {
+//                Toast.makeText(getApplicationContext(), "Please provide Shop's location/address.", Toast.LENGTH_SHORT).show();
+//            }
         }
 
     }
