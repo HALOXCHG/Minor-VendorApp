@@ -3,10 +3,9 @@ package com.minor.vendorapp.Helpers;
 public class HitURL {
 
     //URL Path
-    protected static final String urlPath = "https://db0f1813760d.ngrok.io/";
+    protected static final String urlPath = "https://6c737408da7f.ngrok.io/";
 
     //URL's
-
     public static final String signup = urlPath + "shopRegister";
     public static final String login = urlPath + "vendorLogin";
     public static final String addProduct = urlPath + "addItem";

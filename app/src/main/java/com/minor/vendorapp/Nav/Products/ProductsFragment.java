@@ -159,13 +159,15 @@ public class ProductsFragment extends Fragment {
     //Swipe to refresh new section
     private void swipeToRefreshNews(View v) {
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            if (!swipeRefreshLayout.canChildScrollUp() && !swipeRefreshLayout.isRefreshing()) {
+            if (!swipeRefreshLayout.canChildScrollUp()) {
 //                swipeRefreshLayout.setRefreshing(true);
                 callByRefresh = true;
                 Log.i("Swipe", "" + swipeRefreshLayout.canChildScrollUp());
                 Log.i("Swipe", "" + swipeRefreshLayout.isRefreshing());
                 //Fetch data
                 fetchProducts(v);
+            } else {
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }

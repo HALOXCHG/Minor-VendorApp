@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -57,6 +58,7 @@ public class ProfileFragment extends Fragment implements FragmentDialogAddressPi
     EditText profileShopName, profileOwnerName, profileContactNumber, profileEmailAddress, profileVendorAddress, profileShopType, profileShopTimings;
     ImageView profileShopImage;
     Button profileSaveButton;
+    ConstraintLayout constraintLayout;
 
     ObjectLocationDetails objectLocationDetails = new ObjectLocationDetails();
     JSONObject[] jsonObject = {null, null, null, null, null, null, null};
@@ -77,6 +79,7 @@ public class ProfileFragment extends Fragment implements FragmentDialogAddressPi
         profileShopType = (EditText) view.findViewById(R.id.profileShopType);
         profileShopTimings = (EditText) view.findViewById(R.id.profileShopTimings);
         profileSaveButton = (Button) view.findViewById(R.id.profileSaveButton);
+        constraintLayout = (ConstraintLayout) view.findViewById(R.id.profileLayout);
 
         //Set user profile data
         setProfileData();
@@ -128,6 +131,7 @@ public class ProfileFragment extends Fragment implements FragmentDialogAddressPi
                         storeAddressObject(addLocationDetails(new JSONObject()));
                         storeSignupData(profileUpdateObject.optString("shopName"), profileUpdateObject.optString("ownerName"), profileUpdateObject.optString("shopImage"), profileUpdateObject.optString("email"), profileUpdateObject.optString("contactNo"));
 
+                        constraintLayout.clearFocus();
                         Toast.makeText(getContext(), "Data Updated", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
