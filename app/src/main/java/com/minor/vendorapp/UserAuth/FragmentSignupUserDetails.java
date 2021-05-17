@@ -1,4 +1,4 @@
-package com.minor.vendorapp.Signup;
+package com.minor.vendorapp.UserAuth;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,8 +21,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -36,13 +39,14 @@ import com.minor.vendorapp.Signup.ShopTimings.FragmentDialogShopTimingsPicker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.minor.vendorapp.Helpers.Functions.getInputText;
 import static com.minor.vendorapp.Helpers.Functions.notEmpty;
 import static com.minor.vendorapp.Helpers.Globals.shopTypeList;
 import static com.minor.vendorapp.Helpers.Regex.validEmailIDRegex;
 import static com.minor.vendorapp.Helpers.Regex.validNamesRegex;
 
-public class ActivitySignup extends AppCompatActivity implements FragmentDialogAddressPicker.CustomLocationListener, FragmentDialogShopTimingsPicker.CustomTimingsObjectListener {
+public class FragmentSignupUserDetails extends Fragment implements FragmentDialogAddressPicker.CustomLocationListener, FragmentDialogShopTimingsPicker.CustomTimingsObjectListener {
 
     EditText shopName, ownerName, emailAddress, vendorAddress, shopType, shopTimings;
     ImageView shopImage;
@@ -52,36 +56,39 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
     JSONObject[] jsonObject = {null, null, null, null, null, null, null};
     int shopTypeChoice = -1;
 
+    public FragmentSignupUserDetails() {
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_signup_user_details, container, false);
 
-        Globals.sharedPreferences = getSharedPreferences(Globals.prefName, MODE_PRIVATE);
+        Globals.sharedPreferences = this.getActivity().getSharedPreferences(Globals.prefName, MODE_PRIVATE);
 
-        shopImage = findViewById(R.id.shopImage);
+        shopImage = view.findViewById(R.id.shopImage);
 
-        shopName = findViewById(R.id.shopName);
-        ownerName = findViewById(R.id.ownerName);
-//        contactNumber = findViewById(R.id.contactNumber);
-        emailAddress = findViewById(R.id.emailAddress);
-        vendorAddress = findViewById(R.id.vendorAddress);
-        shopType = findViewById(R.id.shopType);
-        shopTimings = findViewById(R.id.shopTimings);
+        shopName = view.findViewById(R.id.shopName);
+        ownerName = view.findViewById(R.id.ownerName);
+//        contactNumber = view.findViewById(R.id.contactNumber);
+        emailAddress = view.findViewById(R.id.emailAddress);
+        vendorAddress = view.findViewById(R.id.vendorAddress);
+        shopType = view.findViewById(R.id.shopType);
+        shopTimings = view.findViewById(R.id.shopTimings);
 
-        signup = findViewById(R.id.signup);
+        signup = view.findViewById(R.id.signup);
 
-        shopImage.setOnClickListener(view -> triggerImageCapture());
-        shopType.setOnClickListener(view -> getShopType());
-        vendorAddress.setOnClickListener(view -> triggerAddressPicker());
-        shopTimings.setOnClickListener(view -> triggerShopTimingsPickerDialog());
-        signup.setOnClickListener(view -> signup());
+        shopImage.setOnClickListener(v -> triggerImageCapture());
+        shopType.setOnClickListener(v -> getShopType());
+        vendorAddress.setOnClickListener(v -> triggerAddressPicker());
+        shopTimings.setOnClickListener(v -> triggerShopTimingsPickerDialog());
+        signup.setOnClickListener(v -> signup());
 //        findViewById(R.id.tempHome).setOnClickListener(view -> startActivity(new Intent(ActivitySignup.this, ActivityHomeScreen.class)));
 
+        return view;
     }
 
     private void getShopType() {
-        new MaterialAlertDialogBuilder(ActivitySignup.this)
+        new MaterialAlertDialogBuilder(getActivity())
                 .setSingleChoiceItems(shopTypeList, shopTypeChoice, (dialogInterface, i) -> {
                     shopType.setText(shopTypeList[i]);
                     shopTypeChoice = i;
@@ -92,19 +99,19 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
     }
 
     private void triggerImageCapture() {
-        if (ActivityCompat.checkSelfPermission(ActivitySignup.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            Functions.requestPermissions(getBaseContext(), new PermissionCallback() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            Functions.requestPermissions(getContext(), new PermissionCallback() {
                 @Override
                 public void onPermissionsChecked(MultiplePermissionsReport report) {
                     if (report.areAllPermissionsGranted())
                         imageCapture();
                     if (report.isAnyPermissionPermanentlyDenied())
-                        showDexterCustomSettingsDialog(ActivitySignup.this);
+                        showDexterCustomSettingsDialog(getActivity());
                 }
 
                 @Override
                 public void errorListener(DexterError error) {
-                    Toast.makeText(getApplicationContext(), Globals.dexterError, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), Globals.dexterError, Toast.LENGTH_SHORT).show();
                 }
             }, Manifest.permission.CAMERA);
         } else {
@@ -116,24 +123,24 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
     private void imageCapture() {
         Intent cameraIntent = new Intent();
         cameraIntent.setAction("android.media.action.IMAGE_CAPTURE");
-        startActivityForResult(Intent.createChooser(cameraIntent, "Capture Image"), 102);
+        FragmentSignupUserDetails.this.startActivityForResult(Intent.createChooser(cameraIntent, "Capture Image"), 102);
         //Override method onActivityResult triggers on successful Image capture
     }
 
     private void triggerAddressPicker() {
-        if (ActivityCompat.checkSelfPermission(ActivitySignup.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ActivitySignup.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Functions.requestPermissions(getBaseContext(), new PermissionCallback() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Functions.requestPermissions(getContext(), new PermissionCallback() {
                 @Override
                 public void onPermissionsChecked(MultiplePermissionsReport report) {
                     if (report.areAllPermissionsGranted())
                         createAddressPickerDialog();
                     if (report.isAnyPermissionPermanentlyDenied())
-                        showDexterCustomSettingsDialog(ActivitySignup.this);
+                        showDexterCustomSettingsDialog(getActivity());
                 }
 
                 @Override
                 public void errorListener(DexterError error) {
-                    Toast.makeText(getApplicationContext(), Globals.dexterError, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), Globals.dexterError, Toast.LENGTH_SHORT).show();
                 }
             }, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION);
         } else {
@@ -143,8 +150,9 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
     private void createAddressPickerDialog() {
         FragmentDialogAddressPicker fragmentDialogAddressPicker = new FragmentDialogAddressPicker();
+        fragmentDialogAddressPicker.setTargetFragment(FragmentSignupUserDetails.this, 15);
 //        FragmentDialogTest fragmentDialogTest = new FragmentDialogTest();
-        fragmentDialogAddressPicker.show(getSupportFragmentManager(), "AddressPicker");
+        fragmentDialogAddressPicker.show(getParentFragmentManager(), "AddressPicker");
     }
 
     @Override
@@ -155,7 +163,8 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 
     private void triggerShopTimingsPickerDialog() {
         FragmentDialogShopTimingsPicker fragmentDialogShopTimingsPicker = new FragmentDialogShopTimingsPicker();
-        fragmentDialogShopTimingsPicker.show(getSupportFragmentManager(), "TimingsPicker");
+        fragmentDialogShopTimingsPicker.setTargetFragment(FragmentSignupUserDetails.this, 17);
+        fragmentDialogShopTimingsPicker.show(getParentFragmentManager(), "TimingsPicker");
     }
 
     @Override
@@ -182,9 +191,9 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
     // Navigate user to app settings
     public void openAppSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
         intent.setData(uri);
-        startActivityForResult(intent, 101);
+        FragmentSignupUserDetails.this.startActivityForResult(intent, 101);
     }
 
     private void signup() {
@@ -196,12 +205,15 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
         inputEmailAddress = getInputText(emailAddress); //emailAddress : String format
         inputShopType = getInputText(shopType); //shopType : String format
 
-        inputContactNumber = getIntent().getStringExtra("phoneNo");
-        inputPassword = getIntent().getStringExtra("password");
+//        inputContactNumber = getIntent().getStringExtra("phoneNo");
+//        inputPassword = getIntent().getStringExtra("password");
+
+        inputContactNumber = getArguments().getString("phoneNo");
+        inputPassword = getArguments().getString("password");
 
 
         JSONObject inputShopTimingsObject = getShopTimingsJsonObject(); //shopTimings : JSON Object
-        inputShopImage = Functions.bitmapToBase64(ActivitySignup.this, ((BitmapDrawable) shopImage.getDrawable()).getBitmap()); //shopImage : String format
+        inputShopImage = Functions.bitmapToBase64(getActivity(), ((BitmapDrawable) shopImage.getDrawable()).getBitmap()); //shopImage : String format
 
         if (notEmpty(inputShopName) && inputShopName.matches(validNamesRegex)
                 && notEmpty(inputOwnerName) && inputOwnerName.matches(validNamesRegex)
@@ -211,16 +223,16 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
                 && (objectLocationDetails != null) && (inputShopTimingsObject != null)
                 && notEmpty(inputContactNumber) && notEmpty(inputPassword)) {
 
-            Intent intent = new Intent(getApplicationContext(), ActivityHomeScreen.class);
+            Intent intent = new Intent(getContext(), ActivityHomeScreen.class);
             startActivity(intent);
-            finish();
+            getActivity().finish();
 
 //            //Gives full signup JSON Obj.
 //            JSONObject signupJsonObject = getSignupJsonObject(inputOwnerName, inputShopName, inputEmailAddress, inputPassword, inputContactNumber, inputShopType, inputShopImage, inputShopTimingsObject);
 //            Log.i("SignupObj", "" + signupJsonObject);
 //
 //            //Send API Request
-//            ApiRequest.callApi(getBaseContext(), HitURL.signup, signupJsonObject, new Callback() {
+//            ApiRequest.callApi(getContext(), HitURL.signup, signupJsonObject, new Callback() {
 //                @Override
 //                public void response(JSONObject resp) {
 //                    String status = resp.optString("status");
@@ -234,17 +246,17 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
 //                        storeAddressObject(addLocationDetails(new JSONObject()));
 //                        storeSignupData(signupJsonObject.optString("shopName"), signupJsonObject.optString("ownerName"), signupJsonObject.optString("shopImage"), signupJsonObject.optString("email"), signupJsonObject.optString("contactNo"));
 //
-//                        Intent intent = new Intent(getApplicationContext(), ActivityHomeScreen.class);
+//                        Intent intent = new Intent(getContext(), ActivityHomeScreen.class);
 //                        startActivity(intent);
-//                        finish();
+//                        getActivity().finish();
 //                    } else {
-//                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 //                    }
 //                }
 //
 //                @Override
 //                public void error(VolleyError error) {
-//                    Functions.showVolleyErrors(error, getApplicationContext());
+//                    Functions.showVolleyErrors(error, getContext());
 //                }
 //            });
 
@@ -316,7 +328,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
     }
 
     private boolean isImageUploaded() {
-        return !((((BitmapDrawable) shopImage.getDrawable()).getBitmap()).equals(((BitmapDrawable) ((ImageView) findViewById(R.id.sampleShopImage)).getDrawable()).getBitmap()) || (((BitmapDrawable) shopImage.getDrawable()).getBitmap()).equals(((BitmapDrawable) ((ImageView) findViewById(R.id.sampleErrorImage)).getDrawable()).getBitmap()));
+        return !((((BitmapDrawable) shopImage.getDrawable()).getBitmap()).equals(((BitmapDrawable) ((ImageView) getView().findViewById(R.id.sampleShopImage)).getDrawable()).getBitmap()) || (((BitmapDrawable) shopImage.getDrawable()).getBitmap()).equals(((BitmapDrawable) ((ImageView) getView().findViewById(R.id.sampleErrorImage)).getDrawable()).getBitmap()));
     }
 
     private JSONObject getSignupJsonObject(final String ownerName, final String shopName, final String email, final String password, final String contactNo, final String shopType, final String shopImage, final JSONObject shopTimings) {
@@ -376,7 +388,7 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 102 && resultCode == -1 && data != null) {
             Bitmap image = (Bitmap) data.getExtras().get("data");
