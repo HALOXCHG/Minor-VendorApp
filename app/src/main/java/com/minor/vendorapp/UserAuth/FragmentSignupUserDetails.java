@@ -1,5 +1,18 @@
 package com.minor.vendorapp.UserAuth;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.minor.vendorapp.Helpers.Functions.getInputText;
+import static com.minor.vendorapp.Helpers.Functions.notEmpty;
+import static com.minor.vendorapp.Helpers.Functions.storeAddressObject;
+import static com.minor.vendorapp.Helpers.Functions.storeShopId;
+import static com.minor.vendorapp.Helpers.Functions.storeShopPosition;
+import static com.minor.vendorapp.Helpers.Functions.storeShopTimingsObject;
+import static com.minor.vendorapp.Helpers.Functions.storeShopType;
+import static com.minor.vendorapp.Helpers.Functions.storeSignupData;
+import static com.minor.vendorapp.Helpers.Globals.shopTypeList;
+import static com.minor.vendorapp.Helpers.Regex.validEmailIDRegex;
+import static com.minor.vendorapp.Helpers.Regex.validNamesRegex;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,11 +37,15 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.VolleyError;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.listener.DexterError;
+import com.minor.vendorapp.Apis.ApiRequest;
+import com.minor.vendorapp.Apis.Callback;
 import com.minor.vendorapp.Helpers.Functions;
 import com.minor.vendorapp.Helpers.Globals;
+import com.minor.vendorapp.Helpers.HitURL;
 import com.minor.vendorapp.Helpers.PermissionCallback;
 import com.minor.vendorapp.Nav.ActivityHomeScreen;
 import com.minor.vendorapp.R;
@@ -38,13 +55,6 @@ import com.minor.vendorapp.Signup.ShopTimings.FragmentDialogShopTimingsPicker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static android.content.Context.MODE_PRIVATE;
-import static com.minor.vendorapp.Helpers.Functions.getInputText;
-import static com.minor.vendorapp.Helpers.Functions.notEmpty;
-import static com.minor.vendorapp.Helpers.Globals.shopTypeList;
-import static com.minor.vendorapp.Helpers.Regex.validEmailIDRegex;
-import static com.minor.vendorapp.Helpers.Regex.validNamesRegex;
 
 public class FragmentSignupUserDetails extends Fragment implements FragmentDialogAddressPicker.CustomLocationListener, FragmentDialogShopTimingsPicker.CustomTimingsObjectListener {
 
@@ -223,42 +233,43 @@ public class FragmentSignupUserDetails extends Fragment implements FragmentDialo
                 && (objectLocationDetails != null) && (inputShopTimingsObject != null)
                 && notEmpty(inputContactNumber) && notEmpty(inputPassword)) {
 
-            Intent intent = new Intent(getContext(), ActivityHomeScreen.class);
-            startActivity(intent);
-            getActivity().finish();
+//            Intent intent = new Intent(getContext(), ActivityHomeScreen.class);
+//            startActivity(intent);
+//            getActivity().finish();
 
-//            //Gives full signup JSON Obj.
-//            JSONObject signupJsonObject = getSignupJsonObject(inputOwnerName, inputShopName, inputEmailAddress, inputPassword, inputContactNumber, inputShopType, inputShopImage, inputShopTimingsObject);
-//            Log.i("SignupObj", "" + signupJsonObject);
-//
-//            //Send API Request
-//            ApiRequest.callApi(getContext(), HitURL.signup, signupJsonObject, new Callback() {
-//                @Override
-//                public void response(JSONObject resp) {
-//                    String status = resp.optString("status");
-//                    String message = resp.optString("message");
-//
-//                    if (status.equalsIgnoreCase("200")) {
-//                        storeShopId(message);
-//                        storeShopType(signupJsonObject.optString("shopType"));
-//                        storeShopPosition(shopTypeChoice);
-//                        storeShopTimingsObject(inputShopTimingsObject);
-//                        storeAddressObject(addLocationDetails(new JSONObject()));
-//                        storeSignupData(signupJsonObject.optString("shopName"), signupJsonObject.optString("ownerName"), signupJsonObject.optString("shopImage"), signupJsonObject.optString("email"), signupJsonObject.optString("contactNo"));
-//
-//                        Intent intent = new Intent(getContext(), ActivityHomeScreen.class);
-//                        startActivity(intent);
-//                        getActivity().finish();
-//                    } else {
-//                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//
-//                @Override
-//                public void error(VolleyError error) {
-//                    Functions.showVolleyErrors(error, getContext());
-//                }
-//            });
+            //Gives full signup JSON Obj.
+            JSONObject signupJsonObject = getSignupJsonObject(inputOwnerName, inputShopName, inputEmailAddress, inputPassword, inputContactNumber, inputShopType, inputShopImage, inputShopTimingsObject);
+            Log.i("SignupObj", "" + signupJsonObject);
+
+            //Send API Request
+            ApiRequest.callApi(getContext(), HitURL.signup, signupJsonObject, new Callback() {
+                @Override
+                public void response(JSONObject resp) {
+                    String status = resp.optString("status");
+                    String message = resp.optString("message");
+                    Log.i("Signup Resp", "" + resp);
+
+                    if (status.equalsIgnoreCase("200")) {
+                        storeShopId(message);
+                        storeShopType(signupJsonObject.optString("shopType"));
+                        storeShopPosition(shopTypeChoice);
+                        storeShopTimingsObject(inputShopTimingsObject);
+                        storeAddressObject(addLocationDetails(new JSONObject()));
+                        storeSignupData(signupJsonObject.optString("shopName"), signupJsonObject.optString("ownerName"), signupJsonObject.optString("shopImage"), signupJsonObject.optString("email"), signupJsonObject.optString("contactNo"));
+
+                        Intent intent = new Intent(getContext(), ActivityHomeScreen.class);
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else {
+                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void error(VolleyError error) {
+                    Functions.showVolleyErrors(error, getContext());
+                }
+            });
 
         } else {
             //=========================================Harshit Dawane===========================================//

@@ -14,8 +14,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.minor.vendorapp.Helpers.Globals;
-import com.minor.vendorapp.Login.ActivityLogin;
 import com.minor.vendorapp.R;
+import com.minor.vendorapp.UserAuth.ActivityUserAuth;
 
 
 public class ActivityHomeScreen extends AppCompatActivity {
@@ -30,7 +30,7 @@ public class ActivityHomeScreen extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.logout) {
             Globals.sharedPreferences.edit().clear().apply();
-            Intent intent = new Intent(getApplicationContext(), ActivityLogin.class);
+            Intent intent = new Intent(getApplicationContext(), ActivityUserAuth.class);
             startActivity(intent);
             finish();
             return true;

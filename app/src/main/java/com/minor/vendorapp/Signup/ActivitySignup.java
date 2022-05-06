@@ -1,5 +1,11 @@
 package com.minor.vendorapp.Signup;
 
+import static com.minor.vendorapp.Helpers.Functions.getInputText;
+import static com.minor.vendorapp.Helpers.Functions.notEmpty;
+import static com.minor.vendorapp.Helpers.Globals.shopTypeList;
+import static com.minor.vendorapp.Helpers.Regex.validEmailIDRegex;
+import static com.minor.vendorapp.Helpers.Regex.validNamesRegex;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,7 +33,6 @@ import com.karumi.dexter.listener.DexterError;
 import com.minor.vendorapp.Helpers.Functions;
 import com.minor.vendorapp.Helpers.Globals;
 import com.minor.vendorapp.Helpers.PermissionCallback;
-import com.minor.vendorapp.Nav.ActivityHomeScreen;
 import com.minor.vendorapp.R;
 import com.minor.vendorapp.Signup.Location.FragmentDialogAddressPicker;
 import com.minor.vendorapp.Signup.Location.ObjectLocationDetails;
@@ -35,12 +40,6 @@ import com.minor.vendorapp.Signup.ShopTimings.FragmentDialogShopTimingsPicker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static com.minor.vendorapp.Helpers.Functions.getInputText;
-import static com.minor.vendorapp.Helpers.Functions.notEmpty;
-import static com.minor.vendorapp.Helpers.Globals.shopTypeList;
-import static com.minor.vendorapp.Helpers.Regex.validEmailIDRegex;
-import static com.minor.vendorapp.Helpers.Regex.validNamesRegex;
 
 public class ActivitySignup extends AppCompatActivity implements FragmentDialogAddressPicker.CustomLocationListener, FragmentDialogShopTimingsPicker.CustomTimingsObjectListener {
 
@@ -211,9 +210,9 @@ public class ActivitySignup extends AppCompatActivity implements FragmentDialogA
                 && (objectLocationDetails != null) && (inputShopTimingsObject != null)
                 && notEmpty(inputContactNumber) && notEmpty(inputPassword)) {
 
-            Intent intent = new Intent(getApplicationContext(), ActivityHomeScreen.class);
-            startActivity(intent);
-            finish();
+//            Intent intent = new Intent(getApplicationContext(), ActivityHomeScreen.class);
+//            startActivity(intent);
+//            finish();
 
 //            //Gives full signup JSON Obj.
 //            JSONObject signupJsonObject = getSignupJsonObject(inputOwnerName, inputShopName, inputEmailAddress, inputPassword, inputContactNumber, inputShopType, inputShopImage, inputShopTimingsObject);

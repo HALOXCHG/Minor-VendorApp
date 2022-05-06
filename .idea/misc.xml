@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/drawable/circle_toggle_button.xml" value="0.22395833333333334" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/activity_login.xml" value="0.20461538461538462" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/activity_presign_up.xml" value="0.2078125" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/activity_signup.xml" value="0.2078125" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/activity_view_order_details.xml" value="0.25" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/fragment_home.xml" value="0.22" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/fragment_login.xml" value="0.67" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/fragment_products.xml" value="0.20461538461538462" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/fragment_signup_user_credentials.xml" value="0.20461538461538462" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/fragment_signup_user_details.xml" value="0.2078125" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/layout_order_listing_tile.xml" value="0.25" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/layout_ordered_items_listing_tile.xml" value="0.33" />
+        <entry key="..\:/Users/acer/AndroidStudioProjects/MinorVendorApp/app/src/main/res/layout/layout_shop_visits_counter.xml" value="0.22" />
+      </map>
+    </option>
+  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
     <option name="myDefaultNotNull" value="androidx.annotation.NonNull" />
@@ -25,7 +44,7 @@
     </option>
     <option name="myNotNulls">
       <value>
-        <list size="13">
+        <list size="14">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
           <item index="1" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
           <item index="2" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
@@ -39,6 +58,7 @@
           <item index="10" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.NonNull" />
           <item index="11" class="java.lang.String" itemvalue="io.reactivex.annotations.NonNull" />
           <item index="12" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.NonNull" />
+          <item index="13" class="java.lang.String" itemvalue="lombok.NonNull" />
         </list>
       </value>
     </option>
@@ -46,7 +66,7 @@
   <component name="ProjectResources">
     <xml-schema-version>XMLSchema_1_1</xml-schema-version>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

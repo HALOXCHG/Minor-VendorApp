@@ -14,6 +14,7 @@
     <color name="textfield_tint">#222222</color>
     <color name="line_black">#2D2D2D</color>
     <color name="canvas_bg">#BCBCE4</color>
+    <color name="secondaryPink">#FC94B4</color>
 
     <!--    <color name="circle_toggle_button_text_color">@color/teal_200</color>-->
     <color name="dayPressed">@color/teal_700</color>

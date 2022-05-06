@@ -74,7 +74,7 @@
                 android:id="@+id/orderedItemSellingPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" x Rs. 99"
+                android:text=" x Rs. 45"
                 android:textSize="16dp" />
 
             <View
@@ -87,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"
-                android:text="Rs. 45"
+                android:text="Rs. 499"
                 android:textSize="16dp" />
 
         </LinearLayout>

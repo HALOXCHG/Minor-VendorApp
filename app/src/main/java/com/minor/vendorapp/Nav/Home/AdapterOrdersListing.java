@@ -2,6 +2,7 @@ package com.minor.vendorapp.Nav.Home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,7 @@ class AdapterOrdersListing extends RecyclerView.Adapter<AdapterOrdersListing.Ord
         else
             holder.tileDetailOrderCustomerName.setText(list.get(position).getName());
 
-        holder.tileDetailOrderId.setText(list.get(position).getOrderId());
+        holder.tileDetailOrderId.setText(list.get(position).getShortOrderId());
         holder.tileDetailOrderCustomerAddress.setText(list.get(position).getAddress());
         holder.tileDetailOrderDate.setText(list.get(position).getDate());
         holder.tileDetailOrderTime.setText(list.get(position).getTime());
@@ -50,6 +51,12 @@ class AdapterOrdersListing extends RecyclerView.Adapter<AdapterOrdersListing.Ord
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, ActivityViewOrderDetails.class);
             intent.putExtra("Object", list.get(position).getJsonObject().toString());
+            intent.putExtra("OrderId", list.get(position).getOrderId());
+//            JSONObject jsonObject = list.get(position).getJsonObject();
+//            jsonObject.remove("quantity");
+//            jsonObject.remove("itemTotal");
+//            jsonObject.remove("amount");
+            Log.i("View Details", list.get(position).getJsonObject().toString());
             context.startActivity(intent);
         });
     }

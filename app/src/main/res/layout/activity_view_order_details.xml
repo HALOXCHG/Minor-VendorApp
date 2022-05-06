@@ -130,9 +130,10 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerOrderItems"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                tools:ignore="ScrollViewSize" />
+                tools:ignore="ScrollViewSize"
+                tools:listitem="@layout/layout_ordered_items_listing_tile" />
 
             <View
                 android:id="@+id/divider2"
@@ -260,6 +261,53 @@
             android:layout_marginHorizontal="15dp"
             android:layout_weight="1"
             android:text="Accept"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/deliverOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_weight="1"
+            android:text="Mark as Delivered"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/completedText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Order Completed"
+            android:background="@color/green"
+            android:textAlignment="center"
+            android:paddingVertical="10dp"
+            android:textStyle="bold"
+            android:textSize="@dimen/day_button_max_font_size"
             android:textColor="@color/white" />
 
     </LinearLayout>

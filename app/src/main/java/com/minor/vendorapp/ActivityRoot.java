@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.minor.vendorapp.Helpers.Globals;
 import com.minor.vendorapp.Nav.ActivityHomeScreen;
+import com.minor.vendorapp.UserAuth.ActivityUserAuth;
 
 public class ActivityRoot extends AppCompatActivity {
 
@@ -22,7 +23,7 @@ public class ActivityRoot extends AppCompatActivity {
             startActivity(i);
             finish();
         } else {
-            Intent i = new Intent(getApplicationContext(), ActivityHomeScreen.class);
+            Intent i = new Intent(getApplicationContext(), ActivityUserAuth.class);
             startActivity(i);
             finish();
         }

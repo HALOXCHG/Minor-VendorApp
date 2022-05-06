@@ -1,5 +1,7 @@
 package com.minor.vendorapp.Nav.Home;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,11 +37,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class HomeFragment extends Fragment {
 
     Button allOrders, ongoingOrders, historyOrders;
+    TextView todayCounter, totalCounter;
 
     RecyclerView recyclerView;
     ProgressBar loader;
@@ -67,6 +69,9 @@ public class HomeFragment extends Fragment {
         ongoingOrders = (Button) view.findViewById(R.id.ongoingOrders);
         historyOrders = (Button) view.findViewById(R.id.historyOrders);
 
+        todayCounter = (TextView) view.findViewById(R.id.todayCounter);
+        totalCounter = (TextView) view.findViewById(R.id.totalCounter);
+
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerOrders);
         loader = (ProgressBar) view.findViewById(R.id.loader);
 
@@ -81,7 +86,53 @@ public class HomeFragment extends Fragment {
         ongoingOrders.setOnClickListener(view1 -> loadFilteredOrders("Ongoing"));
         historyOrders.setOnClickListener(view1 -> loadFilteredOrders("History"));
 
+        setCounter();
+
         return view;
+    }
+
+    private void setCounter() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("shopId", Globals.sharedPreferences.getString(Globals.shopId, null));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.i("Counter JSONObject", "" + jsonObject);
+        ApiRequest.callApi(getActivity(), HitURL.shopVisits, jsonObject, new Callback() {
+            @Override
+            public void response(JSONObject resp) {
+
+                Log.i("Counter Resp", "" + resp);
+
+                String status = resp.optString("status");
+                String message = resp.optString("message");
+
+                if (status.equalsIgnoreCase("200")) {
+                    try {
+                        JSONArray data = resp.optJSONArray("data");
+                        JSONObject obj = data.optJSONObject(0);
+                        JSONObject totalVisits = obj.getJSONObject("totalCounter");
+                        String counterTotal = totalVisits.getString("counter");
+                        JSONArray todayVisits = obj.optJSONArray("todayCounter");
+                        Integer counterToday = todayVisits.length() != 1 ? todayVisits.length() : 0;
+
+                        todayCounter.setText(counterToday.toString());
+                        totalCounter.setText(counterTotal);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void error(VolleyError error) {
+
+            }
+        });
     }
 
     private void loadFilteredOrders(String status) {
@@ -110,10 +161,9 @@ public class HomeFragment extends Fragment {
 
         JSONObject jsonObject = new JSONObject();
         try {
-//            jsonObject.put("shopId", Globals.sharedPreferences.getString(Globals.shopId, null));
-            jsonObject.put("shopId", "shop1619525798968");
+            jsonObject.put("shopId", Globals.sharedPreferences.getString(Globals.shopId, null));
+//            jsonObject.put("shopId", "shop1619525798968");
         } catch (JSONException e) {
-
             e.printStackTrace();
         }
         Log.i("JSONObject", "" + jsonObject);
@@ -135,7 +185,7 @@ public class HomeFragment extends Fragment {
 
                             JSONObject jObj = array.getJSONObject(i);
 
-                            String orderId = String.format("#%s", jObj.optString("orderId").substring(jObj.optString("orderId").length() - 6));
+                            String orderId = jObj.optString("orderId");
                             String custName = jObj.optString("custName");
                             String orderStatus = jObj.optString("status");
                             String billAmount = String.format("Rs. %s", jObj.optString("amount"));
@@ -199,6 +249,7 @@ public class HomeFragment extends Fragment {
             returnObj.put("quantity", itemQuantity);
             returnObj.put("itemTotal", itemTotal);
             returnObj.put("amount", jObj.optString("amount"));
+            returnObj.put("status", jObj.optString("status"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -36,14 +36,14 @@ class AdapterOrderDetailsItems extends RecyclerView.Adapter<AdapterOrderDetailsI
     public void onBindViewHolder(@NonNull OrdersViewHolder holder, int position) {
         holder.orderedItemImage.setImageBitmap(Functions.base64ToBitmap(list.get(position).getItemImage()));
 
-        if (list.get(position).getItemImage().length() > 20)
+        if (list.get(position).getItemName().length() > 20)
             holder.orderedItemName.setText(String.format("%s...", list.get(position).getItemName().substring(0, 19)));
         else
             holder.orderedItemName.setText(list.get(position).getItemName());
 
         holder.orderedItemUnitsOffered.setText(list.get(position).getOfferedUnits());
-        holder.orderedItemUnits.setText(String.format("Rs. %s", list.get(position).getOrderedUnits()));
-        holder.orderedItemSellingPrice.setText(String.format("Rs. %s", list.get(position).getItemSellingPrice()));
+        holder.orderedItemUnits.setText(list.get(position).getOrderedUnits());
+        holder.orderedItemSellingPrice.setText(list.get(position).getItemSellingPrice());
         holder.orderedItemTotalPrice.setText(list.get(position).getItemTotalCost());
 
 

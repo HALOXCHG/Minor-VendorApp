@@ -41,6 +41,10 @@ class DataTransferOrders {
         return orderId;
     }
 
+    public String getShortOrderId() {
+        return String.format("#%s", orderId.substring(orderId.length() - 6));
+    }
+
     public String getName() {
         return name;
     }
